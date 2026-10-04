@@ -52,7 +52,7 @@ window.DATA = {
     ],
     ho_lao_idle: [
       { who: 'npc', name: 'Hồ Lão', text: 'Ôi chà, khách quý! Lão là Hồ Lão, thương nhân chạy khắp Cửu Châu đây!',
-        choices: [{ label: 'Hàng của lão có gì hay?', goto: 1 }, { label: 'Để sau nhé', goto: -1 }] },
+        choices: [{ label: '🛒 Xem hàng của lão', shop: true }, { label: 'Hàng của lão có gì hay?', goto: 1 }, { label: 'Để sau nhé', goto: -1 }] },
       { who: 'npc', name: 'Hồ Lão', text: 'Tơ lụa, đan dược, tin tức giang hồ — thứ gì cũng có! Cậu cần gì cứ nói với lão.' }
     ],
     ho_lao_thanks: [
