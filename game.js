@@ -12,8 +12,10 @@
   // ---------- sprites ----------
   var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'do_nhi_wave', 'do_nhi_laugh',
                      'do_nhi_talk', 'su_phu', 'su_phu_talk',
-                     'thiet_nguu', 'linh_nhi', 'thach_dau',
+                     'thiet_nguu', 'linh_nhi', 'thach_dau', 'ho_lao', 'ba_ba',
                      'tile_cong_nui', 'tile_nha_tranh', 'tile_ban_da', 'tile_lu_nuoc', 'tile_hang_rao',
+                     'tile_truc', 'tile_dun_cat', 'tile_tan_tich', 'tile_tung_tuyet',
+                     'tile_am_tuyet', 'tile_tuyet_lien', 'tile_nui_lua', 'tile_dung_nham',
                      'cay_phong', 'cau_da', 'den_da', 'anh_dao'];
   var img = {}, loaded = 0;
   spriteNames.forEach(function (n) {
@@ -64,9 +66,14 @@
         { s: 'tile_hang_rao', x: 1570, y: 1160, w: 520,
           blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] }
       ],
-      npcs: ['thiet_nguu', 'linh_nhi', 'thach_dau'],
+      npcs: ['thiet_nguu', 'thach_dau'],
       items: [['khoai', 5, 1500, 700, 260], ['cui', 8, 480, 720, 280]],
-      portals: [{ x: 1870, y: 800, r: 70, to: 'rungphong', sx: 110, sy: 640, label: 'Rừng Phong Đỏ' }],
+      portals: [
+        { x: 1870, y: 800, r: 70, to: 'rungphong', sx: 110, sy: 640, label: 'Rừng Phong Đỏ' },
+        { x: 50, y: 900, r: 70, to: 'rungtruc', sx: 140, sy: 640, label: 'Rừng Trúc' },
+        { x: 1400, y: 1230, r: 70, to: 'samac', sx: 960, sy: 140, label: 'Sa Mạc Vàng' },
+        { x: 960, y: 60, r: 70, to: 'nuttuyet', sx: 960, sy: 1140, label: 'Núi Tuyết' }
+      ],
       spawn: { x: 960, y: 1080 }
     },
     rungphong: {
@@ -96,6 +103,92 @@
       items: [['khoai', 4, 960, 640, 420], ['cui', 4, 960, 640, 420]],
       portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 1800, sy: 800, label: 'Tây Tùy Đài' }],
       spawn: { x: 140, y: 640 }
+    },
+    rungtruc: {
+      label: 'Rừng Trúc', W: 1920, H: 1280, ground: '#4f9e58', weather: null,
+      pond: null, stream: null, dais: null, bridgeX0: 0, bridgeX1: 0, master: null,
+      trees: [],
+      lanterns: [{ x: 200, y: 580 }, { x: 420, y: 580 }],
+      tiles: [
+        { s: 'tile_truc', x: 600, y: 100, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 600, y: 300, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 600, y: 500, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 600, y: 900, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 600, y: 1100, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1100, y: 100, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1100, y: 500, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1100, y: 700, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1100, y: 900, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1100, y: 1100, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1600, y: 100, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1600, y: 300, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1600, y: 500, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1600, y: 700, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1600, y: 900, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_truc', x: 1600, y: 1100, w: 130, blocks: [{ dx: 0, r: 42 }] },
+        { s: 'tile_ban_da', x: 420, y: 780, w: 150, blocks: [{ dx: 0, r: 42 }] }
+      ],
+      npcs: ['linh_nhi'],
+      items: [['cui', 3, 1750, 640, 180]],
+      portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 120, sy: 900, label: 'Tây Tùy Đài' }],
+      spawn: { x: 140, y: 640 }
+    },
+    samac: {
+      label: 'Sa Mạc Vàng', W: 1920, H: 1280, ground: '#e3c172', weather: 'sand',
+      pond: { x: 1400, y: 400, rx: 130, ry: 75 },
+      stream: null, dais: null, bridgeX0: 0, bridgeX1: 0, master: null,
+      trees: [],
+      lanterns: [{ x: 1300, y: 320 }, { x: 1500, y: 320 }],
+      tiles: [
+        { s: 'tile_dun_cat', x: 300, y: 300, w: 260, blocks: [] },
+        { s: 'tile_dun_cat', x: 700, y: 950, w: 260, blocks: [] },
+        { s: 'tile_dun_cat', x: 1150, y: 550, w: 260, blocks: [] },
+        { s: 'tile_dun_cat', x: 1650, y: 1050, w: 260, blocks: [] },
+        { s: 'tile_dun_cat', x: 450, y: 1150, w: 260, blocks: [] },
+        { s: 'tile_tan_tich', x: 300, y: 900, w: 300, blocks: [{ dx: 0, r: 90 }] }
+      ],
+      npcs: ['ho_lao'],
+      items: [],
+      portals: [
+        { x: 960, y: 50, r: 70, to: 'taytuydai', sx: 1400, sy: 1160, label: 'Tây Tùy Đài' },
+        { x: 1870, y: 640, r: 70, to: 'daolua', sx: 110, sy: 640, label: 'Đảo Núi Lửa' }
+      ],
+      spawn: { x: 960, y: 140 }
+    },
+    nuttuyet: {
+      label: 'Núi Tuyết', W: 1920, H: 1280, ground: '#dfe8f2', weather: 'snow',
+      pond: null, stream: null, dais: null, bridgeX0: 0, bridgeX1: 0, master: null,
+      trees: [
+        { x: 200, y: 300, s: 'tile_tung_tuyet' }, { x: 500, y: 200, s: 'tile_tung_tuyet' },
+        { x: 900, y: 250, s: 'tile_tung_tuyet' }, { x: 1300, y: 200, s: 'tile_tung_tuyet' },
+        { x: 1650, y: 300, s: 'tile_tung_tuyet' }, { x: 1750, y: 700, s: 'tile_tung_tuyet' },
+        { x: 1400, y: 1000, s: 'tile_tung_tuyet' }, { x: 900, y: 1100, s: 'tile_tung_tuyet' },
+        { x: 500, y: 1050, s: 'tile_tung_tuyet' }, { x: 200, y: 800, s: 'tile_tung_tuyet' }
+      ],
+      lanterns: [{ x: 860, y: 420 }, { x: 1060, y: 420 }],
+      tiles: [
+        { s: 'tile_am_tuyet', x: 960, y: 350, w: 280, blocks: [{ dx: 0, r: 80 }] }
+      ],
+      npcs: ['ba_ba'],
+      items: [['tuyet_lien', 1, 960, 120, 10]],
+      portals: [{ x: 960, y: 1230, r: 70, to: 'taytuydai', sx: 960, sy: 140, label: 'Tây Tùy Đài' }],
+      spawn: { x: 960, y: 1140 }
+    },
+    daolua: {
+      label: 'Đảo Núi Lửa', W: 1920, H: 1280, ground: '#6b5a4e', weather: 'ember',
+      pond: null, stream: null, dais: null, bridgeX0: 0, bridgeX1: 0, master: null,
+      trees: [],
+      lanterns: [],
+      tiles: [
+        { s: 'tile_nui_lua', x: 1500, y: 400, w: 420, blocks: [{ dx: 0, r: 140 }] },
+        { s: 'tile_dung_nham', x: 900, y: 800, w: 300, blocks: [{ dx: 0, r: 80 }] },
+        { s: 'tile_dung_nham', x: 1300, y: 1050, w: 240, blocks: [{ dx: 0, r: 60 }] },
+        { s: 'tile_dung_nham', x: 500, y: 900, w: 200, blocks: [{ dx: 0, r: 50 }] }
+      ],
+      npcs: [],
+      items: [],
+      portals: [{ x: 50, y: 640, r: 70, to: 'samac', sx: 1780, sy: 640, label: 'Sa Mạc Vàng' }],
+      spawn: { x: 140, y: 640 }
     }
   };
 
@@ -105,17 +198,25 @@
       home: { x: 760, y: 1000 }, range: 130, questId: 'khoai',
       dlg: 'thiet_nguu_idle', thanks: 'thiet_nguu_thanks', idleDone: 'thiet_nguu_done' },
     linh_nhi: { id: 'linh_nhi', name: 'Linh Nhi', spr: 'linh_nhi', color: '#d63384',
-      home: { x: 1330, y: 600 }, range: 110,
-      dlg: 'linh_nhi_idle', thanks: null, idleDone: null },
+      home: { x: 300, y: 700 }, range: 110, questId: 'sao_truc',
+      dlg: 'linh_nhi_idle', thanks: 'linh_nhi_thanks', idleDone: 'linh_nhi_done' },
     thach_dau: { id: 'thach_dau', name: 'Thạch Đầu', spr: 'thach_dau', color: '#6b7280',
       home: { x: 480, y: 720 }, range: 120, questId: 'cui',
-      dlg: 'thach_dau_idle', thanks: 'thach_dau_thanks', idleDone: 'thach_dau_done' }
+      dlg: 'thach_dau_idle', thanks: 'thach_dau_thanks', idleDone: 'thach_dau_done' },
+    ho_lao: { id: 'ho_lao', name: 'Hồ Lão', spr: 'ho_lao', color: '#92400e',
+      home: { x: 960, y: 700 }, range: 100, questId: 'ho_tong',
+      dlg: 'ho_lao_idle', thanks: 'ho_lao_thanks', idleDone: 'ho_lao_done' },
+    ba_ba: { id: 'ba_ba', name: 'Tuyết Sơn Bà Bà', spr: 'ba_ba', color: '#64748b',
+      home: { x: 960, y: 480 }, range: 80, questId: 'tuyet_lien',
+      dlg: 'ba_ba_idle', thanks: 'ba_ba_thanks', idleDone: 'ba_ba_done' }
   };
   var NPCS = [];
 
   // ---------- quests & items (G2: from DATA) ----------
   var QUESTS = DATA.quests.map(function (q) {
-    return { id: q.id, name: q.name, desc: q.desc, need: q.need, have: 0, state: 'active', thanked: false };
+    return { id: q.id, name: q.name, desc: q.desc, need: q.need,
+             type: q.type || 'collect', target: q.target || null,
+             have: 0, state: 'active', thanked: false };
   });
   function questById(id) {
     for (var i = 0; i < QUESTS.length; i++) if (QUESTS[i].id === id) return QUESTS[i];
@@ -133,10 +234,25 @@
   function npcLines(n) {
     if (n.questId) {
       var q = questById(n.questId);
-      if (q.state === 'done' && !q.thanked) { q.thanked = true; return DATA.dialogues[n.thanks]; }
-      if (q.state === 'done') return DATA.dialogues[n.idleDone];
+      if (q.state === 'done' && !q.thanked) {
+        q.thanked = true;
+        return n.thanks ? DATA.dialogues[n.thanks] : DATA.dialogues[n.dlg];
+      }
+      if (q.state === 'done') return n.idleDone ? DATA.dialogues[n.idleDone] : DATA.dialogues[n.dlg];
     }
     return DATA.dialogues[n.dlg];
+  }
+  function questTalk(npcId) {
+    for (var i = 0; i < QUESTS.length; i++) {
+      var q = QUESTS[i];
+      if (q.type === 'talk' && q.target === npcId && q.state === 'active') {
+        q.state = 'done';
+        sfxQuest();
+        saveGame();
+        toast('★ Hoàn thành: ' + q.name, 3000);
+        if (qlOpen) renderQuestLog();
+      }
+    }
   }
 
   function loadMap(name, sx, sy, quiet) {
@@ -289,6 +405,7 @@
   function openDialogueFor(tgt) {
     talkTarget = tgt;
     dlgLines = tgt.isMaster ? DATA.dialogues.master : npcLines(tgt);
+    if (!tgt.isMaster) questTalk(tgt.id);
     openDialogue();
   }
   function openDialogue() {
@@ -384,6 +501,7 @@
     if (qlOpen) renderQuestLog();
     qlEl.classList.toggle('show', qlOpen);
   }
+  var ITEM_NAMES = { khoai: 'củ khoai', cui: 'khúc củi', la_phong: 'lá phong', tuyet_lien: 'Tuyết Liên' };
   function questProgress(id) {
     var q = questById(id);
     if (!q || q.state !== 'active') return;
@@ -395,7 +513,7 @@
       saveGame();
       toast('★ Hoàn thành: ' + q.name, 3000);
     } else {
-      toast('+1 ' + (id === 'khoai' ? 'củ khoai' : 'khúc củi') + ' (' + q.have + '/' + q.need + ')');
+      toast('+1 ' + (ITEM_NAMES[id] || id) + ' (' + q.have + '/' + q.need + ')');
     }
     if (qlOpen) renderQuestLog();
   }
@@ -430,6 +548,11 @@
   for (var k = 0; k < 46; k++) {
     petals.push({ x: rnd() * WORLD_W, y: rnd() * WORLD_H, s: 2 + rnd() * 3, v: 18 + rnd() * 30, ph: rnd() * 6.28 });
   }
+  // weather particles (G3)
+  var weatherP = [];
+  for (var wi = 0; wi < 80; wi++) {
+    weatherP.push({ x: Math.random() * 1920, y: Math.random() * 1280, ph: Math.random() * 6.28 });
+  }
   var pathStones = [];
   for (var sy = 470; sy <= 1260; sy += 46) {
     pathStones.push({ x: 960 + Math.sin(sy * 0.01) * 26 + (rnd() - 0.5) * 14, y: sy, r: 30 + rnd() * 10 });
@@ -455,6 +578,18 @@
       ctx.beginPath(); ctx.ellipse(0, -8, 11, 8, 0.3, 0, 6.29); ctx.fill();
       ctx.fillStyle = '#65a30d';
       ctx.fillRect(-2, -20, 4, 8);
+    } else if (it.kind === 'la_phong') {
+      ctx.fillStyle = '#dc2626';
+      ctx.save();
+      ctx.translate(0, -8); ctx.rotate(0.5 + Math.sin(t * 2 + it.ph) * 0.3);
+      ctx.beginPath(); ctx.ellipse(0, 0, 10, 6, 0, 0, 6.29); ctx.fill();
+      ctx.restore();
+    } else if (it.kind === 'tuyet_lien') {
+      var tim = img['tile_tuyet_lien'], tw = 54, th = tim.height * (54 / tim.width);
+      var tglow = 0.3 + Math.sin(t * 4) * 0.15;
+      ctx.fillStyle = 'rgba(165,243,252,' + tglow.toFixed(2) + ')';
+      ctx.beginPath(); ctx.arc(0, -th / 2, 34, 0, 6.29); ctx.fill();
+      ctx.drawImage(tim, -tw / 2, -th, tw, th);
     } else {
       ctx.strokeStyle = '#92400e'; ctx.lineWidth = 5; ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(-9, -2); ctx.lineTo(9, -14); ctx.stroke();
@@ -563,6 +698,20 @@
     dayT = (dayT + dt / DAY_LEN) % 1;
     saveT += dt;
     if (saveT > 20) { saveT = 0; saveGame(); }
+
+    // weather (G3)
+    var wth = MAPS[curMap].weather;
+    if (wth) weatherP.forEach(function (p) {
+      if (wth === 'snow') {
+        p.y += 70 * dt; p.x += Math.sin(t * 2 + p.ph) * 24 * dt;
+        if (p.y > WORLD_H) { p.y = -10; p.x = Math.random() * WORLD_W; }
+      } else {
+        p.x += (wth === 'sand' ? 260 : 60) * dt;
+        p.y += (wth === 'sand' ? 50 : -40) * dt;
+        if (p.x > WORLD_W) { p.x = -10; p.y = Math.random() * WORLD_W; }
+        if (p.y > WORLD_H) p.y = -10; else if (p.y < -10) p.y = WORLD_H + 10;
+      }
+    });
 
     // portal transition (G2)
     if (fadeDir === 1) {
@@ -745,6 +894,21 @@
       ctx.fillRect(-pt.s / 2, -pt.s / 4, pt.s, pt.s / 2);
       ctx.restore();
     });
+
+    // weather (G3)
+    if (wth === 'snow') {
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      weatherP.forEach(function (p) {
+        if (p.x < cam.x - 10 || p.x > cam.x + W + 10 || p.y < cam.y - 10 || p.y > cam.y + H + 10) return;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, 6.29); ctx.fill();
+      });
+    } else if (wth === 'sand' || wth === 'ember') {
+      ctx.fillStyle = wth === 'sand' ? 'rgba(230,200,130,0.55)' : 'rgba(255,120,40,0.65)';
+      weatherP.forEach(function (p) {
+        if (p.x < cam.x - 10 || p.x > cam.x + W + 10 || p.y < cam.y - 10 || p.y > cam.y + H + 10) return;
+        ctx.fillRect(p.x, p.y, 5, 2);
+      });
+    }
 
     ctx.restore();
 
