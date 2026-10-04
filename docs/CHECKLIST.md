@@ -67,19 +67,20 @@
 - [x] Sprite + hội thoại Hồ Lão, Tuyết Sơn Bà Bà
 - [x] Bão cát (sa mạc), tuyết rơi (núi tuyết), than hồng (đảo lửa)
 
-## G4 — Chiều sâu gameplay
+## G4 — Chiều sâu gameplay ✅ (xong 2026-10-05)
 
 ### Chiến đấu
-- [ ] Đánh thường (phím Space) + 3 chiêu thức (1/2/3)
-- [ ] Quái theo vùng: khỉ đá, rắn trúc, bò cạp cát, sói tuyết, quái nham thạch
-- [ ] Boss chương 1: **Hỏa Ma** ở đảo núi lửa
-- [ ] Máu, năng lượng, cấp độ, kinh nghiệm
+- [x] Đánh thường (phím Space) + 3 chiêu thức (1: Kiếm khí, 2: Hồi máu, 3: Nộ)
+- [x] Quái theo vùng: khỉ đá, rắn trúc, bò cạp cát, sói tuyết, quái nham thạch
+- [x] Boss: **Hỏa Ma** ở đảo núi lửa (320 máu, rơi 120 xu)
+- [x] Máu, nội lực, cấp độ, kinh nghiệm, số sát thương bay
+- [x] Quái AI: đi lang thang, đuổi theo, tấn công; nghỉ ban đêm
 
 ### Vật phẩm & kinh tế
-- [ ] Túi đồ UI (phím I)
-- [ ] Chuỗi kiếm: gỗ → sắt → hàn thiết → tuyết liên
-- [ ] Cửa hàng Hồ Lão (mua/bán)
-- [ ] Tiền: đồng xu rơi từ quái và nhiệm vụ
+- [x] Túi đồ UI (phím I): xem kiếm, bánh bao, xu, cấp/XP
+- [x] Chuỗi kiếm: gỗ → sắt → hàn thiết → tuyết liên (NV6 thưởng Bảo kiếm Tuyết Liên)
+- [x] Cửa hàng Hồ Lão (mua bánh bao, kiếm sắt, hàn thiết kiếm)
+- [x] Tiền xu rơi từ quái; gục ngã mất 10% xu, hồi sinh tại chỗ
 
 ## G5 — Cốt truyện & polish (Chương 1 hoàn chỉnh)
 
