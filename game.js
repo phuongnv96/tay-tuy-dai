@@ -269,6 +269,24 @@
     }
     return DATA.dialogues[n.dlg];
   }
+  function questKill(spr) {
+    for (var i = 0; i < QUESTS.length; i++) {
+      var q = QUESTS[i];
+      if (q.type === 'kill' && q.target === spr && q.state === 'active') {
+        q.state = 'done';
+        sfxQuest();
+        saveGame();
+        toast('★ Hoàn thành: ' + q.name + ' — về gặp sư phụ!', 3500);
+        if (qlOpen) renderQuestLog();
+      }
+    }
+  }
+  function masterLines() {
+    var q = questById('dai_hoi');
+    if (q && q.state === 'done') return DATA.dialogues.master_finale;
+    if (q && q.state === 'active') return DATA.dialogues.master_daihoi;
+    return DATA.dialogues.master;
+  }
   function questTalk(npcId) {
     for (var i = 0; i < QUESTS.length; i++) {
       var q = QUESTS[i];
@@ -277,6 +295,7 @@
         sfxQuest();
         saveGame();
         toast('★ Hoàn thành: ' + q.name, 3000);
+        if (npcId === 'master') pendingEnding = true;
         if (qlOpen) renderQuestLog();
       }
     }
@@ -327,6 +346,7 @@
       stats.coins += m.coins;
       addFloater(m.x, m.y - 235 * m.scale, '+' + m.coins + ' xu', '#fbbf24');
       gainXp(m.xp);
+      questKill(m.spr);
       sfxKill();
     }
   }
@@ -547,6 +567,14 @@
   window.addEventListener('keydown', function (e) {
     keys[e.key.toLowerCase()] = true;
     ac();
+    if (titleOpen) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dismissTitle(); }
+      return;
+    }
+    if (introOpen()) {
+      if (e.key === 'Enter' || e.key === ' ') document.getElementById('intro-next').click();
+      return;
+    }
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].indexOf(e.key.toLowerCase()) >= 0) e.preventDefault();
     if ((e.key === 'e' || e.key === 'E' || e.key === ' ') && !dialogueOpen && !shopOpen && !invOpen) {
       var tgt = nearestTarget();
@@ -562,6 +590,7 @@
       if (e.key === '4') eatBanhBao();
     }
     if (e.key === 'Escape') { closeShop(); if (invOpen) toggleInv(); }
+    if (e.key === 'm' || e.key === 'M') { musicOn = !musicOn; toast(musicOn ? '🔊 Nhạc: bật' : '🔇 Nhạc: tắt'); }
     if (!dialogueOpen && !emote) {
       if (e.key === 'q' || e.key === 'Q') emote = { spr: 'do_nhi_wave', until: t + 1.0 };
       if (e.key === 'f' || e.key === 'F') emote = { spr: 'do_nhi_laugh', until: t + 1.4 };
@@ -622,8 +651,13 @@
   }
   function openDialogueFor(tgt) {
     talkTarget = tgt;
-    dlgLines = tgt.isMaster ? DATA.dialogues.master : npcLines(tgt);
-    if (!tgt.isMaster) questTalk(tgt.id);
+    if (tgt.isMaster) {
+      dlgLines = masterLines();
+      questTalk('master');
+    } else {
+      dlgLines = npcLines(tgt);
+      questTalk(tgt.id);
+    }
     openDialogue();
   }
   function openDialogue() {
@@ -637,7 +671,57 @@
     dialogueOpen = false;
     dlg.classList.remove('show');
     talkTarget = null;
+    if (pendingEnding) { pendingEnding = false; showEnding(); }
   }
+  var pendingEnding = false;
+  function showEnding() {
+    document.getElementById('ending').classList.add('show');
+    sfxQuest();
+  }
+  document.getElementById('ending-close').addEventListener('click', function () {
+    document.getElementById('ending').classList.remove('show');
+  });
+
+  // ---------- title / intro (G5) ----------
+  var titleOpen = true, hadSave = false, introIdx = 0;
+  var INTRO = [
+    'Xưa kia, tại Cửu Châu, võ lâm phân tranh không ngớt…',
+    'Ngươi — một thiếu niên mồ côi — nghe danh Sư Phụ Yixuan ở Tây Tùy Đài, lặn lội lên núi bái sư.',
+    'Từ đây, hành trình khám phá Cửu Châu bắt đầu: rừng trúc, sa mạc, tuyết sơn, đảo lửa…',
+    'Hãy mạnh lên, kết giao bằng hữu, và viết nên truyền kỳ của riêng mình!'
+  ];
+  var titleEl = document.getElementById('title'),
+      introEl = document.getElementById('intro'),
+      introCard = document.getElementById('intro-card');
+  function showIntroCard() { introCard.textContent = INTRO[introIdx]; }
+  function dismissTitle() {
+    if (!titleOpen) return;
+    titleOpen = false;
+    titleEl.classList.remove('show');
+    if (!hadSave) { introIdx = 0; showIntroCard(); introEl.classList.add('show'); }
+  }
+  document.getElementById('btn-start').addEventListener('click', function () { ac(); dismissTitle(); });
+  document.getElementById('intro-next').addEventListener('click', function () {
+    sfxBlip();
+    introIdx++;
+    if (introIdx >= INTRO.length) introEl.classList.remove('show');
+    else showIntroCard();
+  });
+  function introOpen() { return introEl.classList.contains('show'); }
+
+  // ---------- music (G5: generative, subtle) ----------
+  var MUSIC_SCALES = {
+    taytuydai: [523, 587, 659, 784, 880],
+    rungphong: [440, 523, 587, 659, 784],
+    rungtruc: [587, 659, 784, 880, 1047],
+    samac: [392, 440, 523, 587, 659],
+    nuttuyet: [659, 784, 880, 1047, 1175],
+    daolua: [330, 392, 440, 523, 587]
+  };
+  var musicT = 1.5, musicOn = true;
+
+  // ---------- mobile touch (G5) ----------
+  var joy = { active: false, x: 0, y: 0 };
   btnNext.addEventListener('click', function () {
     sfxBlip();
     lineIdx++;
@@ -837,12 +921,66 @@
     ctx.restore();
   }
 
+  // ---------- mobile touch controls (G5) ----------
+  if ('ontouchstart' in window) {
+    document.getElementById('touch').classList.add('show');
+    (function () {
+      var joyEl = document.getElementById('joy'), knob = document.getElementById('joy-knob');
+      var joyId = null, joyCX = 0, joyCY = 0;
+      function joyMove(tc) {
+        var dx = tc.clientX - joyCX, dy = tc.clientY - joyCY;
+        var d = Math.hypot(dx, dy), max = 46;
+        if (d > max) { dx *= max / d; dy *= max / d; }
+        joy.x = dx / max; joy.y = dy / max;
+        knob.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+      }
+      joyEl.addEventListener('touchstart', function (e) {
+        e.preventDefault(); ac();
+        var tc = e.changedTouches[0]; joyId = tc.identifier;
+        var r = joyEl.getBoundingClientRect();
+        joyCX = r.left + r.width / 2; joyCY = r.top + r.height / 2;
+        joy.active = true; joyMove(tc);
+      }, { passive: false });
+      joyEl.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+        for (var i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === joyId) joyMove(e.changedTouches[i]);
+        }
+      }, { passive: false });
+      joyEl.addEventListener('touchend', function (e) {
+        for (var i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === joyId) {
+            joyId = null; joy.active = false; joy.x = joy.y = 0;
+            knob.style.transform = 'translate(0px,0px)';
+          }
+        }
+      });
+      var acts = document.querySelectorAll('#touch-btns button');
+      for (var bi = 0; bi < acts.length; bi++) {
+        (function (b) {
+          b.addEventListener('touchstart', function (e) {
+            e.preventDefault(); ac();
+            if (titleOpen) { dismissTitle(); return; }
+            if (introOpen()) { document.getElementById('intro-next').click(); return; }
+            var a = b.getAttribute('data-act');
+            if (a === 'e') { var tgt = nearestTarget(); if (tgt) openDialogueFor(tgt); }
+            else if (a === 'atk') playerAttack();
+            else if (a === '1') castSkill(0);
+            else if (a === '2') castSkill(1);
+            else if (a === '3') castSkill(2);
+          }, { passive: false });
+        })(acts[bi]);
+      }
+    })();
+  }
+
   var cam = { x: 0, y: 0 };
   var last = 0, t = 0;
 
   // boot (G2): restore save or start fresh
   (function boot() {
     var s = loadSave();
+    hadSave = !!s;
     if (s) {
       dayT = (typeof s.dayT === 'number') ? s.dayT : 0.3;
       loadMap(s.map, s.x, s.y, true);
@@ -872,12 +1010,13 @@
 
     // ----- update -----
     if (emote && t > emote.until) emote = null;
-    if (!dialogueOpen && !emote && !shopOpen && !invOpen) {
+    if (!dialogueOpen && !emote && !shopOpen && !invOpen && !titleOpen && !introOpen()) {
       var mx = 0, my = 0;
       if (keys['a'] || keys['arrowleft']) mx -= 1;
       if (keys['d'] || keys['arrowright']) mx += 1;
       if (keys['w'] || keys['arrowup']) my -= 1;
       if (keys['s'] || keys['arrowdown']) my += 1;
+      if (joy.active) { mx += joy.x; my += joy.y; }
       player.moving = (mx !== 0 || my !== 0);
       if (player.moving) {
         var len = Math.hypot(mx, my); mx /= len; my /= len;
@@ -980,6 +1119,17 @@
     dayT = (dayT + dt / DAY_LEN) % 1;
     saveT += dt;
     if (saveT > 20) { saveT = 0; saveGame(); }
+
+    // music (G5)
+    if (musicOn && !titleOpen && !introOpen()) {
+      musicT -= dt;
+      if (musicT <= 0) {
+        musicT = 2.4 + Math.random() * 1.8;
+        var msc = MUSIC_SCALES[curMap] || MUSIC_SCALES.taytuydai;
+        tone(msc[Math.floor(Math.random() * msc.length)], 1.4, 'triangle', 0.016);
+        if (Math.random() < 0.3) tone(msc[Math.floor(Math.random() * msc.length)] / 2, 1.8, 'sine', 0.012, 0.4);
+      }
+    }
 
     // weather (G3)
     var wth = MAPS[curMap].weather;
