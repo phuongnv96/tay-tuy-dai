@@ -52,6 +52,33 @@
     font-size: 15px; padding: 10px 26px; border-radius: 6px;
   }
   #dlg-btns button:hover { background: #3b4a5e; }
+  #dlg-choices { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
+  .dlg-choice {
+    background: #7c5c2e; color: #fff; border: none; cursor: pointer;
+    font-size: 15px; padding: 10px 22px; border-radius: 6px;
+  }
+  .dlg-choice:hover { background: #96702f; }
+  #toast {
+    position: absolute; left: 50%; top: 22px; transform: translateX(-50%);
+    background: rgba(20,28,38,.92); color: #f5d67b;
+    padding: 10px 22px; border-radius: 8px; font-size: 15px;
+    border: 1px solid rgba(245,214,123,.6);
+    opacity: 0; transition: opacity .25s; pointer-events: none;
+    white-space: nowrap; z-index: 5;
+  }
+  #toast.show { opacity: 1; }
+  #questlog {
+    position: absolute; right: 14px; top: 14px; width: 280px;
+    background: rgba(16,24,32,.94); border: 1px solid rgba(245,214,123,.5);
+    border-radius: 10px; padding: 12px 14px; display: none; z-index: 5;
+  }
+  #questlog.show { display: block; }
+  #questlog h3 { font-size: 15px; color: #f5d67b; margin-bottom: 8px; letter-spacing: 2px; }
+  .ql-item { border-top: 1px solid rgba(255,255,255,.12); padding: 8px 0; }
+  .ql-item b { font-size: 14px; color: #ffe9a8; }
+  .ql-item span { float: right; font-size: 12px; color: #8fa3b8; }
+  .ql-item.done span { color: #7ddf8e; }
+  .ql-item p { font-size: 12px; color: #b9c6d4; margin-top: 4px; line-height: 1.45; }
   .controls { margin-top: 12px; font-size: 13px; color: #8fa3b8; }
   .controls b { color: #f5d67b; }
 </style>
@@ -62,10 +89,13 @@
   <div id="wrap">
     <canvas id="game" width="960" height="600"></canvas>
     <div id="hint">Nhấn <b>E</b> để nói chuyện với sư phụ</div>
+    <div id="toast"></div>
+    <div id="questlog"><h3>📜 NHIỆM VỤ</h3><div id="ql-list"></div></div>
     <div id="dialogue">
       <div id="dlg-name">Sư Phụ Yixuan</div>
       <div id="dlg-box">
         <div id="dlg-text"></div>
+        <div id="dlg-choices" style="display:none"></div>
         <div id="dlg-btns">
           <button id="btn-next">Tiếp tục ▸</button>
           <button id="btn-close">Đóng</button>
@@ -73,10 +103,11 @@
       </div>
     </div>
   </div>
-  <div class="controls"><b>WASD / ←↑↓→</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện &nbsp;•&nbsp; <b>Q</b> vẫy tay &nbsp;•&nbsp; <b>F</b> cười</div>
+  <div class="controls"><b>WASD / ←↑↓→</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện &nbsp;•&nbsp; <b>J</b> nhiệm vụ &nbsp;•&nbsp; <b>Q</b> vẫy tay &nbsp;•&nbsp; <b>F</b> cười</div>
   <script src="assets_chars.js"></script>
   <script src="assets_env1.js"></script>
   <script src="assets_env2.js"></script>
+  <script src="assets_env3.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
