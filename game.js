@@ -10,7 +10,7 @@
   var WORLD_W = 1920, WORLD_H = 1280;
 
   // ---------- sprites ----------
-  var spriteNames = ['do_nhi', 'su_phu', 'cay_phong', 'cau_da', 'den_da', 'anh_dao'];
+  var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'su_phu', 'cay_phong', 'cau_da', 'den_da', 'anh_dao'];
   var img = {}, loaded = 0;
   spriteNames.forEach(function (n) {
     var im = new Image();
@@ -277,7 +277,12 @@
     } });
     ents.push({ y: player.y, f: function () {
       var bob = player.moving ? Math.abs(Math.sin(t * 10)) * 4 : Math.sin(t * 2) * 2;
-      drawSprite('do_nhi', player.x, player.y - bob, player.face < 0);
+      var spr = 'do_nhi';
+      if (player.moving) {
+        var frames = ['do_nhi_w1', 'do_nhi', 'do_nhi_w2', 'do_nhi'];
+        spr = frames[Math.floor(t * 8) % 4];
+      }
+      drawSprite(spr, player.x, player.y - bob, player.face < 0);
       ctx.fillStyle = '#e8f4ff'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('Nguyên', player.x, player.y - 228 - bob);
     } });
