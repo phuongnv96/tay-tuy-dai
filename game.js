@@ -23,69 +23,100 @@
     img[n] = im;
   });
 
-  // ---------- world layout ----------
-  var pond = { x: 960, y: 800, rx: 230, ry: 135 };
-  var stream = { x0: 1170, y0: 772, x1: 1920, y1: 828 };   // from pond to east edge
-  var bridgeX0 = 1200, bridgeX1 = 1700;                    // walkable span on bridge
-  var dais = { x0: 830, y0: 280, x1: 1090, y1: 440 };      // stone platform
-  var master = { x: 960, y: 360 };
+  // ---------- world layout (G2: multi-map) ----------
+  var WORLD_W = 1920, WORLD_H = 1280; // set by loadMap
+  var pond = null, stream = null, dais = null, bridgeX0 = 0, bridgeX1 = 0;
+  var master = null;
+  var trees = [], lanterns = [], tiles = [], blockers = [];
   var player = { x: 960, y: 1080, speed: 265, face: 1, moving: false };
+  var curMap = 'taytuydai';
 
-  var trees = [
-    { x: 420, y: 520, s: 'cay_phong' },
-    { x: 1500, y: 540, s: 'cay_phong' },
-    { x: 620, y: 940, s: 'anh_dao' },
-    { x: 1320, y: 1000, s: 'anh_dao' },
-    { x: 1620, y: 300, s: 'anh_dao' }
-  ];
-  var lanterns = [
-    { x: 872, y: 640 }, { x: 1048, y: 640 },
-    { x: 872, y: 940 }, { x: 1048, y: 940 }
-  ];
-
-  var blockers = [];
-  trees.forEach(function (t) { blockers.push({ x: t.x, y: t.y, r: 48 }); });
-  lanterns.forEach(function (l) { blockers.push({ x: l.x, y: l.y, r: 18 }); });
-  blockers.push({ x: master.x, y: master.y, r: 36 });
-
-  // ---------- NPCs (G1) ----------
-  var NPCS = [
-    { id: 'thiet_nguu', name: 'Thiết Ngưu', spr: 'thiet_nguu', color: '#b45309',
-      x: 760, y: 1000, home: { x: 760, y: 1000 }, range: 130, wt: 0, moving: false,
-      questId: 'khoai',
-      idle: [
-        { who: 'npc', name: 'Thiết Ngưu', text: 'Sư đệ! Đói meo râu rồi… ngươi tìm giúp ta 3 củ khoai lang được không?',
-          choices: [{ label: 'Để đệ lo!', goto: 1 }, { label: 'Để sau nhé', goto: -1 }] },
-        { who: 'npc', name: 'Thiết Ngưu', text: 'Khoai mọc quanh bìa rừng phong, đi về phía đông ấy. Cảm ơn sư đệ trước nhé!' }
+  var MAPS = {
+    taytuydai: {
+      label: 'Tây Tùy Đài', W: 1920, H: 1280, ground: '#69b34c',
+      pond: { x: 960, y: 800, rx: 230, ry: 135 },
+      stream: { x0: 1170, y0: 772, x1: 1920, y1: 828 },
+      bridgeX0: 1200, bridgeX1: 1700,
+      dais: { x0: 830, y0: 280, x1: 1090, y1: 440 },
+      master: { x: 960, y: 360 },
+      trees: [
+        { x: 420, y: 520, s: 'cay_phong' },
+        { x: 1500, y: 540, s: 'cay_phong' },
+        { x: 620, y: 940, s: 'anh_dao' },
+        { x: 1320, y: 1000, s: 'anh_dao' },
+        { x: 1620, y: 300, s: 'anh_dao' }
       ],
-      thanks: [{ who: 'npc', name: 'Thiết Ngưu', text: 'Ngon quá! Đa tạ sư đệ! Sau này đói cứ tìm ta!' }],
-      idleDone: [{ who: 'npc', name: 'Thiết Ngưu', text: 'No nê rồi… giờ chỉ muốn ngủ một giấc!' }] },
-    { id: 'linh_nhi', name: 'Linh Nhi', spr: 'linh_nhi', color: '#d63384',
-      x: 1330, y: 600, home: { x: 1330, y: 600 }, range: 110, wt: 0, moving: false,
-      idle: [
-        { who: 'npc', name: 'Linh Nhi', text: 'Hi hi, sư đệ mới hả? Tỷ đang tập bài sáo mới nè.',
-          choices: [{ label: 'Tỷ thổi thử đi!', goto: 1 }, { label: 'Để khi khác', goto: -1 }] },
-        { who: 'npc', name: 'Linh Nhi', text: '…♪ ♫ … Nghe được không? Sư phụ bảo tỷ thổi còn phô lắm!' }
-      ] },
-    { id: 'thach_dau', name: 'Thạch Đầu', spr: 'thach_dau', color: '#6b7280',
-      x: 480, y: 720, home: { x: 480, y: 720 }, range: 120, wt: 0, moving: false,
-      questId: 'cui',
-      idle: [
-        { who: 'npc', name: 'Thạch Đầu', text: 'Cậu là đồ đệ mới của Yixuan tiên sinh hả? Chào cậu!',
-          choices: [{ label: 'Bác cần giúp gì không?', goto: 1 }, { label: 'Chào bác!', goto: -1 }] },
-        { who: 'npc', name: 'Thạch Đầu', text: 'Mùa này củi khô hiếm lắm. Cậu nhặt giúp bác 5 khúc củi quanh bìa rừng nhé!',
-          choices: [{ label: 'Để cháu lo!', goto: 2 }, { label: 'Để sau nhé', goto: -1 }] },
-        { who: 'npc', name: 'Thạch Đầu', text: 'Cảm ơn cháu trước nhé! Củi khô nằm rải rác quanh đây đó.' }
+      lanterns: [
+        { x: 872, y: 640 }, { x: 1048, y: 640 },
+        { x: 872, y: 940 }, { x: 1048, y: 940 }
       ],
-      thanks: [{ who: 'npc', name: 'Thạch Đầu', text: 'Đủ củi rồi! Tối nay cả nhà ấm. Cảm ơn cháu nhiều!' }],
-      idleDone: [{ who: 'npc', name: 'Thạch Đầu', text: 'Rừng phong mùa này đẹp lắm, cậu đi dạo đi!' }] }
-  ];
+      tiles: [
+        { s: 'tile_cong_nui', x: 960, y: 1200, w: 280,
+          blocks: [{ dx: -92, r: 26 }, { dx: 92, r: 26 }] },
+        { s: 'tile_nha_tranh', x: 660, y: 1160, w: 300,
+          blocks: [{ dx: 0, r: 82 }] },
+        { s: 'tile_ban_da', x: 1260, y: 950, w: 170,
+          blocks: [{ dx: 0, r: 46 }] },
+        { s: 'tile_lu_nuoc', x: 800, y: 1170, w: 95,
+          blocks: [{ dx: 0, r: 22 }] },
+        { s: 'tile_hang_rao', x: 350, y: 1160, w: 520,
+          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] },
+        { s: 'tile_hang_rao', x: 1570, y: 1160, w: 520,
+          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] }
+      ],
+      npcs: ['thiet_nguu', 'linh_nhi', 'thach_dau'],
+      items: [['khoai', 5, 1500, 700, 260], ['cui', 8, 480, 720, 280]],
+      portals: [{ x: 1870, y: 800, r: 70, to: 'rungphong', sx: 110, sy: 640, label: 'Rừng Phong Đỏ' }],
+      spawn: { x: 960, y: 1080 }
+    },
+    rungphong: {
+      label: 'Rừng Phong Đỏ', W: 1920, H: 1280, ground: '#5da24a',
+      pond: null, stream: null, dais: null, bridgeX0: 0, bridgeX1: 0, master: null,
+      trees: [
+        { x: 180, y: 260, s: 'cay_phong' }, { x: 420, y: 180, s: 'cay_phong' },
+        { x: 680, y: 220, s: 'cay_phong' }, { x: 940, y: 160, s: 'cay_phong' },
+        { x: 1200, y: 200, s: 'cay_phong' }, { x: 1460, y: 180, s: 'cay_phong' },
+        { x: 1700, y: 280, s: 'cay_phong' }, { x: 1780, y: 560, s: 'cay_phong' },
+        { x: 1700, y: 860, s: 'cay_phong' }, { x: 1450, y: 1080, s: 'cay_phong' },
+        { x: 1150, y: 1120, s: 'cay_phong' }, { x: 850, y: 1060, s: 'cay_phong' },
+        { x: 600, y: 1150, s: 'cay_phong' }, { x: 300, y: 1050, s: 'cay_phong' },
+        { x: 160, y: 800, s: 'cay_phong' }
+      ],
+      lanterns: [
+        { x: 860, y: 560 }, { x: 1060, y: 560 },
+        { x: 860, y: 720 }, { x: 1060, y: 720 }
+      ],
+      tiles: [
+        { s: 'tile_ban_da', x: 960, y: 640, w: 170,
+          blocks: [{ dx: 0, r: 46 }] },
+        { s: 'tile_hang_rao', x: 960, y: 300, w: 520,
+          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] }
+      ],
+      npcs: ['thach_dau'],
+      items: [['khoai', 4, 960, 640, 420], ['cui', 4, 960, 640, 420]],
+      portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 1800, sy: 800, label: 'Tây Tùy Đài' }],
+      spawn: { x: 140, y: 640 }
+    }
+  };
 
-  // ---------- quests & items (G1) ----------
-  var QUESTS = [
-    { id: 'khoai', name: 'Bữa trưa của sư huynh', desc: 'Tìm 3 củ khoai lang cho Thiết Ngưu.', need: 3, have: 0, state: 'active', thanked: false },
-    { id: 'cui', name: 'Củi cho Thạch Đầu', desc: 'Nhặt 5 khúc củi khô cho Thạch Đầu.', need: 5, have: 0, state: 'active', thanked: false }
-  ];
+  // ---------- NPC definitions (G2: data-driven) ----------
+  var NPC_DEFS = {
+    thiet_nguu: { id: 'thiet_nguu', name: 'Thiết Ngưu', spr: 'thiet_nguu', color: '#b45309',
+      home: { x: 760, y: 1000 }, range: 130, questId: 'khoai',
+      dlg: 'thiet_nguu_idle', thanks: 'thiet_nguu_thanks', idleDone: 'thiet_nguu_done' },
+    linh_nhi: { id: 'linh_nhi', name: 'Linh Nhi', spr: 'linh_nhi', color: '#d63384',
+      home: { x: 1330, y: 600 }, range: 110,
+      dlg: 'linh_nhi_idle', thanks: null, idleDone: null },
+    thach_dau: { id: 'thach_dau', name: 'Thạch Đầu', spr: 'thach_dau', color: '#6b7280',
+      home: { x: 480, y: 720 }, range: 120, questId: 'cui',
+      dlg: 'thach_dau_idle', thanks: 'thach_dau_thanks', idleDone: 'thach_dau_done' }
+  };
+  var NPCS = [];
+
+  // ---------- quests & items (G2: from DATA) ----------
+  var QUESTS = DATA.quests.map(function (q) {
+    return { id: q.id, name: q.name, desc: q.desc, need: q.need, have: 0, state: 'active', thanked: false };
+  });
   function questById(id) {
     for (var i = 0; i < QUESTS.length; i++) if (QUESTS[i].id === id) return QUESTS[i];
     return null;
@@ -98,50 +129,69 @@
       if (!collides(x, y, null)) ITEMS.push({ kind: kind, x: x, y: y, taken: false, ph: Math.random() * 6.28 });
     }
   }
-  scatterItems('khoai', 5, 1500, 700, 260);  // east, near maple forest
-  scatterItems('cui', 8, 480, 720, 280);     // west, near woodcutter
 
   function npcLines(n) {
     if (n.questId) {
       var q = questById(n.questId);
-      if (q.state === 'done' && !q.thanked) { q.thanked = true; return n.thanks; }
-      if (q.state === 'done') return n.idleDone;
+      if (q.state === 'done' && !q.thanked) { q.thanked = true; return DATA.dialogues[n.thanks]; }
+      if (q.state === 'done') return DATA.dialogues[n.idleDone];
     }
-    return n.idle;
+    return DATA.dialogues[n.dlg];
   }
 
-  // ---------- decorative tiles (G1) ----------
-  var tiles = [
-    { s: 'tile_cong_nui', x: 960, y: 1200, w: 280,
-      blocks: [{ dx: -92, r: 26 }, { dx: 92, r: 26 }] },
-    { s: 'tile_nha_tranh', x: 660, y: 1160, w: 300,
-      blocks: [{ dx: 0, r: 82 }] },
-    { s: 'tile_ban_da', x: 1260, y: 950, w: 170,
-      blocks: [{ dx: 0, r: 46 }] },
-    { s: 'tile_lu_nuoc', x: 800, y: 1170, w: 95,
-      blocks: [{ dx: 0, r: 22 }] },
-    { s: 'tile_hang_rao', x: 350, y: 1160, w: 520,
-      blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] },
-    { s: 'tile_hang_rao', x: 1570, y: 1160, w: 520,
-      blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] }
-  ];
-  tiles.forEach(function (tl) {
-    (tl.blocks || []).forEach(function (b) { blockers.push({ x: tl.x + b.dx, y: tl.y, r: b.r }); });
-  });
+  function loadMap(name, sx, sy, quiet) {
+    var M = MAPS[name];
+    curMap = name;
+    WORLD_W = M.W; WORLD_H = M.H;
+    pond = M.pond; stream = M.stream; dais = M.dais;
+    bridgeX0 = M.bridgeX0 || 0; bridgeX1 = M.bridgeX1 || 0;
+    master = M.master ? { x: M.master.x, y: M.master.y } : null;
+    trees = M.trees; lanterns = M.lanterns; tiles = M.tiles;
+    blockers = [];
+    trees.forEach(function (t) { blockers.push({ x: t.x, y: t.y, r: 48 }); });
+    lanterns.forEach(function (l) { blockers.push({ x: l.x, y: l.y, r: 18 }); });
+    if (master) blockers.push({ x: master.x, y: master.y, r: 36 });
+    tiles.forEach(function (tl) {
+      (tl.blocks || []).forEach(function (b) { blockers.push({ x: tl.x + b.dx, y: tl.y, r: b.r }); });
+    });
+    NPCS = M.npcs.map(function (id) {
+      var d = NPC_DEFS[id];
+      return { id: d.id, name: d.name, spr: d.spr, color: d.color,
+               x: d.home.x, y: d.home.y, home: { x: d.home.x, y: d.home.y },
+               range: d.range, wt: Math.random() * 2, tx: undefined, ty: undefined,
+               moving: false, questId: d.questId, dlg: d.dlg, thanks: d.thanks, idleDone: d.idleDone };
+    });
+    ITEMS = [];
+    M.items.forEach(function (sp) { scatterItems(sp[0], sp[1], sp[2], sp[3], sp[4]); });
+    buildPads();
+    player.x = sx; player.y = sy;
+    if (typeof cam !== 'undefined') {
+      cam.x = Math.max(0, Math.min(WORLD_W - W, player.x - W / 2));
+      cam.y = Math.max(0, Math.min(WORLD_H - H, player.y - H / 2));
+    }
+    if (!quiet) toast('— ' + M.label + ' —', 1800);
+  }
+
+  // (NPC runtime instances are built by loadMap from NPC_DEFS)
+
+  // (quests/items built from DATA + MAPS by loadMap)
 
   function inPond(x, y) {
+    if (!pond) return false;
     var dx = (x - pond.x) / pond.rx, dy = (y - pond.y) / pond.ry;
     return dx * dx + dy * dy < 1;
   }
   function inStream(x, y) {
+    if (!stream) return false;
     if (y < stream.y0 || y > stream.y1 || x < stream.x0 || x > stream.x1) return false;
     return x < bridgeX0 || x > bridgeX1; // bridge span is walkable
   }
   function inDais(x, y) {
+    if (!dais) return false;
     return x > dais.x0 && x < dais.x1 && y > dais.y0 && y < dais.y1;
   }
   function npcBlocked(x, y, self) {
-    if (self !== master) {
+    if (master && self !== master) {
       var dx = x - master.x, dy = y - master.y;
       if (dx * dx + dy * dy < 38 * 38) return true;
     }
@@ -186,14 +236,10 @@
   });
   window.addEventListener('keyup', function (e) { keys[e.key.toLowerCase()] = false; });
 
-  function nearMaster() {
-    var dx = player.x - master.x, dy = player.y - master.y;
-    return dx * dx + dy * dy < 120 * 120;
-  }
   function nearestTarget() {
     var best = null, bestD = 130 * 130;
-    var cands = [{ id: 'master', name: 'Sư Phụ Yixuan', color: '#2f9e44', x: master.x, y: master.y, isMaster: true }]
-      .concat(NPCS);
+    var cands = NPCS.slice();
+    if (master) cands.unshift({ id: 'master', name: 'Sư Phụ Yixuan', color: '#2f9e44', x: master.x, y: master.y, isMaster: true });
     for (var i = 0; i < cands.length; i++) {
       var c = cands[i], dx = player.x - c.x, dy = player.y - c.y, d = dx * dx + dy * dy;
       if (d < bestD) { bestD = d; best = c; }
@@ -203,12 +249,6 @@
 
   // ---------- dialogue (G1: per-target + choices) ----------
   var dialogueOpen = false, lineIdx = 0, dlgLines = [];
-  var masterLines = [
-    { who: 'master', name: 'Sư Phụ Yixuan', text: 'Ừm, ta nghe đây, đồ nhi.' },
-    { who: 'master', name: 'Sư Phụ Yixuan', text: 'Ngươi đã vượt rừng phong đỏ, qua cầu đá bắc ngang suối, đến được Tây Tùy Đài… quả là có duyên.' },
-    { who: 'master', name: 'Sư Phụ Yixuan', text: 'Từ hôm nay, ngươi chính thức là đệ tử của ta. Cứ đi dạo quanh đây cho quen đường, rồi quay lại gặp ta.' },
-    { who: 'player', name: 'Nguyên', text: 'Đệ tử bái kiến sư phụ!' }
-  ];
   var dlg = document.getElementById('dialogue');
   var dlgName = document.getElementById('dlg-name');
   var dlgText = document.getElementById('dlg-text');
@@ -248,7 +288,7 @@
   }
   function openDialogueFor(tgt) {
     talkTarget = tgt;
-    dlgLines = tgt.isMaster ? masterLines : npcLines(tgt);
+    dlgLines = tgt.isMaster ? DATA.dialogues.master : npcLines(tgt);
     openDialogue();
   }
   function openDialogue() {
@@ -307,6 +347,28 @@
     toastTO = setTimeout(function () { toastEl.classList.remove('show'); }, ms || 2200);
   }
   var qlEl = document.getElementById('questlog'), qlList = document.getElementById('ql-list'), qlOpen = false;
+  // ---------- save/load + day-night (G2) ----------
+  var SAVE_KEY = 'taytuydai_save_v1';
+  function saveGame() {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({
+        map: curMap, x: Math.round(player.x), y: Math.round(player.y), dayT: dayT,
+        quests: QUESTS.map(function (q) { return { id: q.id, have: q.have, state: q.state, thanked: q.thanked }; })
+      }));
+    } catch (e) {}
+  }
+  function loadSave() {
+    try {
+      var s = JSON.parse(localStorage.getItem(SAVE_KEY));
+      return (s && s.map && MAPS[s.map]) ? s : null;
+    } catch (e) { return null; }
+  }
+  var dayT = 0.3, DAY_LEN = 300, saveT = 0;
+  function daylight() {
+    var s = Math.sin(dayT * 6.283);
+    return Math.max(0, Math.min(1, (s + 0.3) / 1.3));
+  }
+  function isNight() { return daylight() < 0.22; }
   function renderQuestLog() {
     qlList.innerHTML = '';
     QUESTS.forEach(function (q) {
@@ -330,6 +392,7 @@
     if (q.have >= q.need) {
       q.state = 'done';
       sfxQuest();
+      saveGame();
       toast('★ Hoàn thành: ' + q.name, 3000);
     } else {
       toast('+1 ' + (id === 'khoai' ? 'củ khoai' : 'khúc củi') + ' (' + q.have + '/' + q.need + ')');
@@ -351,13 +414,17 @@
     });
   }
   var pads = [];
-  for (var p = 0; p < 14; p++) {
-    var a = rnd() * Math.PI * 2, rr = 0.25 + rnd() * 0.65;
-    pads.push({
-      x: pond.x + Math.cos(a) * pond.rx * rr,
-      y: pond.y + Math.sin(a) * pond.ry * rr,
-      r: 10 + rnd() * 14, lotus: rnd() > 0.72, ph: rnd() * 6.28
-    });
+  function buildPads() {
+    pads = [];
+    if (!pond) return;
+    for (var p = 0; p < 14; p++) {
+      var a = rnd() * Math.PI * 2, rr = 0.25 + rnd() * 0.65;
+      pads.push({
+        x: pond.x + Math.cos(a) * pond.rx * rr,
+        y: pond.y + Math.sin(a) * pond.ry * rr,
+        r: 10 + rnd() * 14, lotus: rnd() > 0.72, ph: rnd() * 6.28
+      });
+    }
   }
   var petals = [];
   for (var k = 0; k < 46; k++) {
@@ -396,8 +463,38 @@
     ctx.restore();
   }
 
+  var fadeA = 0, fadeDir = 0, pendingPortal = null;
+  function drawPortal(p) {
+    var pulse = 1 + Math.sin(t * 3) * 0.1;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.strokeStyle = 'rgba(196,181,253,0.95)'; ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.arc(0, -46, 36 * pulse, 0, 6.29); ctx.stroke();
+    ctx.fillStyle = 'rgba(139,92,246,0.16)';
+    ctx.beginPath(); ctx.arc(0, -46, 36 * pulse, 0, 6.29); ctx.fill();
+    ctx.fillStyle = '#ddd6fe'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('→ ' + p.label, 0, 26);
+    ctx.restore();
+  }
+
   var cam = { x: 0, y: 0 };
   var last = 0, t = 0;
+
+  // boot (G2): restore save or start fresh
+  (function boot() {
+    var s = loadSave();
+    if (s) {
+      dayT = (typeof s.dayT === 'number') ? s.dayT : 0.3;
+      loadMap(s.map, s.x, s.y, true);
+      (s.quests || []).forEach(function (sq) {
+        var q = questById(sq.id);
+        if (q) { q.have = sq.have; q.state = sq.state; q.thanked = sq.thanked; }
+      });
+      toast('Đã tải tiến trình đã lưu — ' + MAPS[curMap].label, 2600);
+    } else {
+      loadMap('taytuydai', MAPS.taytuydai.spawn.x, MAPS.taytuydai.spawn.y, true);
+    }
+  })();
 
   function start() {
     requestAnimationFrame(frame);
@@ -426,8 +523,9 @@
         if (player.moving) sfxStep(dt);
       }
     }
-    // NPC wander (G1)
+    // NPC wander (G1); sleep at night (G2)
     NPCS.forEach(function (n) {
+      if (isNight()) { n.moving = false; return; }
       n.wt -= dt;
       var dx = (n.tx === undefined ? n.x : n.tx) - n.x,
           dy = (n.ty === undefined ? n.y : n.ty) - n.y,
@@ -450,12 +548,6 @@
       }
     });
     // item pickup (G1)
-    tiles.forEach(function (tl) {
-      ents.push({ y: tl.y, f: function () {
-        var im = img[tl.s], h = im.height * (tl.w / im.width);
-        ctx.drawImage(im, tl.x - tl.w / 2, tl.y - h + 14, tl.w, h);
-      } });
-    });
     ITEMS.forEach(function (it) {
       if (it.taken) return;
       var pdx = player.x - it.x, pdy = player.y - it.y;
@@ -467,6 +559,32 @@
       if (pt.x < -10) pt.x = WORLD_W + 10;
     });
 
+    // day/night + autosave (G2)
+    dayT = (dayT + dt / DAY_LEN) % 1;
+    saveT += dt;
+    if (saveT > 20) { saveT = 0; saveGame(); }
+
+    // portal transition (G2)
+    if (fadeDir === 1) {
+      fadeA += dt * 2.4;
+      if (fadeA >= 1) {
+        fadeA = 1;
+        var pp = pendingPortal;
+        loadMap(pp.to, pp.sx, pp.sy);
+        saveGame();
+        fadeDir = -1;
+      }
+    } else if (fadeDir === -1) {
+      fadeA -= dt * 2.4;
+      if (fadeA <= 0) { fadeA = 0; fadeDir = 0; pendingPortal = null; }
+    } else if (!dialogueOpen) {
+      var portals = MAPS[curMap].portals;
+      for (var pi = 0; pi < portals.length; pi++) {
+        var p = portals[pi], pdx = player.x - p.x, pdy = player.y - p.y;
+        if (pdx * pdx + pdy * pdy < p.r * p.r) { pendingPortal = p; fadeDir = 1; break; }
+      }
+    }
+
     cam.x = Math.max(0, Math.min(WORLD_W - W, player.x - W / 2));
     cam.y = Math.max(0, Math.min(WORLD_H - H, player.y - H / 2));
 
@@ -475,7 +593,7 @@
     ctx.translate(-Math.round(cam.x), -Math.round(cam.y));
 
     // ground
-    ctx.fillStyle = '#69b34c';
+    ctx.fillStyle = MAPS[curMap].ground || '#69b34c';
     ctx.fillRect(cam.x, cam.y, W, H);
     grassPatches.forEach(function (g) {
       if (g.x < cam.x - 60 || g.x > cam.x + W + 60 || g.y < cam.y - 60 || g.y > cam.y + H + 60) return;
@@ -492,6 +610,7 @@
     });
 
     // stream
+    if (stream) {
     ctx.fillStyle = '#3d9bd6';
     ctx.fillRect(stream.x0, stream.y0, stream.x1 - stream.x0, stream.y1 - stream.y0);
     ctx.fillStyle = 'rgba(255,255,255,0.18)';
@@ -500,8 +619,10 @@
       ctx.fillRect(wx + off, stream.y0 + 12, 46, 3);
       ctx.fillRect(wx - off + 30, stream.y0 + 36, 40, 3);
     }
+    }
 
     // pond
+    if (pond) {
     ctx.fillStyle = '#2b7a4b';
     ctx.beginPath(); ctx.ellipse(pond.x, pond.y, pond.rx + 14, pond.ry + 14, 0, 0, 6.29); ctx.fill();
     ctx.fillStyle = '#2f9e8f';
@@ -522,14 +643,18 @@
         ctx.beginPath(); ctx.arc(pd.x, pd.y + bob, 4, 0, 6.29); ctx.fill();
       }
     });
+    }
 
     // bridge (drawn flat over stream)
+    if (stream) {
     (function () {
       var im = img['cau_da'], bw = 560, bh = im.height * (560 / im.width);
       ctx.drawImage(im, 1450 - bw / 2, 800 - bh / 2, bw, bh);
     })();
+    }
 
     // stone dais (platform + steps)
+    if (dais) {
     ctx.fillStyle = '#9aa0a8';
     ctx.fillRect(dais.x0, dais.y0, dais.x1 - dais.x0, dais.y1 - dais.y0);
     ctx.fillStyle = '#b9bec6';
@@ -538,20 +663,32 @@
     for (var st = 0; st < 3; st++) {
       ctx.fillRect(dais.x0 + 60 + st * 46, dais.y1, 40, 14);
     }
+    }
 
     // entities sorted by y
     var ents = [];
+    tiles.forEach(function (tl) {
+      ents.push({ y: tl.y, f: function () {
+        var im = img[tl.s], h = im.height * (tl.w / im.width);
+        ctx.drawImage(im, tl.x - tl.w / 2, tl.y - h + 14, tl.w, h);
+      } });
+    });
     trees.forEach(function (tr) { ents.push({ y: tr.y, f: function () { drawSprite(tr.s, tr.x, tr.y, false); } }); });
     lanterns.forEach(function (l) {
       ents.push({ y: l.y, f: function () {
         drawSprite('den_da', l.x, l.y, false);
+        var la = 0.3 + (1 - daylight()) * 0.45; // brighter at night
         var gl = ctx.createRadialGradient(l.x, l.y - 105, 4, l.x, l.y - 105, 46);
-        gl.addColorStop(0, 'rgba(255,200,90,0.35)');
+        gl.addColorStop(0, 'rgba(255,200,90,' + la.toFixed(2) + ')');
         gl.addColorStop(1, 'rgba(255,200,90,0)');
         ctx.fillStyle = gl;
         ctx.beginPath(); ctx.arc(l.x, l.y - 105, 46, 0, 6.29); ctx.fill();
       } });
     });
+    MAPS[curMap].portals.forEach(function (p) {
+      ents.push({ y: p.y, f: function () { drawPortal(p); } });
+    });
+    if (master) {
     ents.push({ y: master.y, f: function () {
       var bob = Math.sin(t * 1.4) * 3;
       var mspr = 'su_phu';
@@ -562,6 +699,7 @@
       ctx.fillStyle = '#2f9e44'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('Sư Phụ Yixuan', master.x, master.y - 228 + bob);
     } });
+    }
     ents.push({ y: player.y, f: function () {
       var bob = player.moving ? Math.abs(Math.sin(t * 10)) * 4 : Math.sin(t * 2) * 2;
       var spr = 'do_nhi';
@@ -585,7 +723,10 @@
         drawSprite(n.spr, n.x, n.y - bob, false);
         ctx.fillStyle = n.color; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
         ctx.fillText(n.name, n.x, n.y - 218 - bob);
-        if (n.questId && questById(n.questId).state === 'active') {
+        if (isNight()) {
+          ctx.fillStyle = '#a5b4fc'; ctx.font = 'bold 16px sans-serif';
+          ctx.fillText('z z', n.x + 30, n.y - 230 - bob + Math.sin(t * 2) * 3);
+        } else if (n.questId && questById(n.questId).state === 'active') {
           var qb = Math.sin(t * 4) * 4;
           ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 20px sans-serif';
           ctx.fillText('!', n.x + 46, n.y - 206 + qb - bob);
@@ -606,6 +747,24 @@
     });
 
     ctx.restore();
+
+    // night overlay + clock (G2)
+    var dl = daylight();
+    if (dl < 1) {
+      ctx.fillStyle = 'rgba(10,16,48,' + ((1 - dl) * 0.42).toFixed(3) + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'left';
+    var hh = Math.floor(dayT * 24), mm = Math.floor((dayT * 24 % 1) * 60);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    var clockTxt = (isNight() ? '🌙 ' : '☀️ ') + (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm + '  ' + MAPS[curMap].label;
+    ctx.fillText(clockTxt, 12, 26);
+
+    // fade transition (G2)
+    if (fadeA > 0) {
+      ctx.fillStyle = 'rgba(8,8,18,' + fadeA.toFixed(3) + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
 
     // hint
     var htgt = !dialogueOpen && nearestTarget();
