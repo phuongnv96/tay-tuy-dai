@@ -82,20 +82,22 @@
 - [x] Cửa hàng Hồ Lão (mua bánh bao, kiếm sắt, hàn thiết kiếm)
 - [x] Tiền xu rơi từ quái; gục ngã mất 10% xu, hồi sinh tại chỗ
 
-## G5 — Cốt truyện & polish (Chương 1 hoàn chỉnh)
+## G5 — Cốt truyện & polish (Chương 1 hoàn chỉnh) ✅ (xong 2026-10-05)
 
 ### Cốt truyện
-- [ ] NV chính 4: *Cầu đá gãy* (nối giữa NV3 và NV5)
-- [ ] NV chính 8: *Đại hội võ lâm* ở Hoàng Cung
-- [ ] Intro mở đầu: đồ nhi lên núi bái sư (cảnh phim ngắn)
-- [ ] Ending chương 1 + teaser chương 2
+- [x] NV4: *Cầu đá gãy* (nhờ Thạch Đầu sửa cầu)
+- [x] NV7: *Dị biến đảo lửa* (tiêu diệt Hỏa Ma — nhiệm vụ dạng "hạ quái" mới)
+- [x] NV8: *Đại hội võ lâm* (về gặp sư phụ → thoại kết + màn hình Hết Chương 1)
+- [x] Intro mở đầu: 4 khung truyện khi chơi lần đầu
+- [x] Ending chương 1 + teaser chương 2 (Hoàng Cung)
+- [ ] Map Hoàng Cung riêng → dời sang Chương 2 (chưa có sprite cung điện)
 
 ### Hoàn thiện
-- [ ] Nhạc nền riêng từng vùng
-- [ ] Hiệu ứng âm thanh đầy đủ
-- [ ] Hỗ trợ cảm ứng (mobile): joystick ảo + nút bấm
-- [ ] Màn hình title + credit
-- [ ] Chơi thử toàn bộ từ đầu đến cuối, sửa lỗi
+- [x] Nhạc nền generative riêng từng vùng (ngũ cung, rất nhẹ, phím M tắt/mở)
+- [x] Hiệu ứng âm thanh đầy đủ (chém, kỹ năng, hồi máu, trúng đòn, hạ quái)
+- [x] Hỗ trợ cảm ứng (mobile): joystick ảo + nút E/⚔/1/2/3
+- [x] Màn hình title + intro + ending
+- [x] Chơi thử toàn bộ qua smoke test tự động, sửa lỗi
 
 ---
 
