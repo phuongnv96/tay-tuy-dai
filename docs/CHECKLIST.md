@@ -47,34 +47,25 @@
 - [x] Lưu game localStorage (vị trí, bản đồ, nhiệm vụ, giờ) — tự lưu mỗi 20s, khi xong NV, khi chuyển bản đồ
 - [x] Tải game đã lưu khi mở lại
 
-## G3 — Mở rộng thế giới (5 vùng)
+## G3 — Mở rộng thế giới ✅ (xong 2026-10-05)
 
-### Rừng Phong Đỏ
-- [ ] Map rừng phong + Cây Phong Cổ Thụ
-- [ ] NV chính 2: *Lá phong đỏ* (hái 5 lá)
-- [ ] NV phụ: *Linh hồn thủ rừng* (chỉ xuất hiện đêm trăng)
-- [ ] Quái: khỉ đá (G4 mới đánh được, giờ chỉ hiện ra)
+### 4 vùng đất mới (từ bản đồ thế giới)
+- [x] Rừng Trúc (tây) — mê cung tre, Linh Nhi thổi sáo
+- [x] Sa Mạc Vàng (nam) — bão cát, ốc đảo, tàn tích, Hồ Lão
+- [x] Núi Tuyết (bắc) — tuyết rơi, am tranh, Tuyết Sơn Bà Bà
+- [x] Đảo Núi Lửa (đông sa mạc) — núi lửa, dung nham (đi thuyền từ sa mạc)
+- [x] Cổng nối các vùng, mỗi vùng có màu đất + thời tiết riêng
 
-### Rừng Trúc
-- [ ] Map rừng trúc + mê cung trúc
-- [ ] NV chính 3: *Tiếng sáo trong trúc* (gặp Linh Nhi)
-- [ ] NV phụ: *Sáo gãy* (tìm trúc tía)
+### Nhiệm vụ chính tuyến
+- [x] NV2: *Lá phong đỏ* (hái 5 lá ở Rừng Phong Đỏ)
+- [x] NV3: *Tiếng sáo trong trúc* (gặp Linh Nhi)
+- [x] NV5: *Thương đội sa mạc* (gặp Hồ Lão)
+- [x] NV6: *Thí luyện Tuyết Sơn* (hái Tuyết Liên)
+- [x] Nhiệm vụ dạng "nói chuyện" (talk) bên cạnh "nhặt đồ" (collect)
 
-### Sa Mạc Vàng
-- [ ] Map sa mạc + ốc đảo + tàn tích
-- [ ] NV chính 5: *Thương đội gặp nạn* (hộ tống Hồ Lão)
-- [ ] Hiệu ứng bão cát giảm tầm nhìn
-- [ ] Vật phẩm: xẻng (đào tàn tích)
-
-### Núi Tuyết
-- [ ] Map núi tuyết + am tranh Bà Bà
-- [ ] NV chính 6: *Thí luyện Tuyết Sơn* (hái Tuyết Liên)
-- [ ] Đường trơn: nhân vật trượt nhẹ khi đi trên băng
-
-### Đảo Núi Lửa
-- [ ] Map đảo + dung nham (chạm vào mất máu)
-- [ ] NV chính 7: *Dị biến đảo lửa*
-- [ ] Thuyền của Hồ Lão (đi lại giữa đảo và đất liền)
+### NPC & thời tiết
+- [x] Sprite + hội thoại Hồ Lão, Tuyết Sơn Bà Bà
+- [x] Bão cát (sa mạc), tuyết rơi (núi tuyết), than hồng (đảo lửa)
 
 ## G4 — Chiều sâu gameplay
 
