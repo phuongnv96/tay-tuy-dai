@@ -68,6 +68,7 @@
       ],
       npcs: ['thiet_nguu', 'thach_dau'],
       items: [['khoai', 5, 1500, 700, 260], ['cui', 8, 480, 720, 280]],
+      monsters: [],
       portals: [
         { x: 1870, y: 800, r: 70, to: 'rungphong', sx: 110, sy: 640, label: 'Rừng Phong Đỏ' },
         { x: 50, y: 900, r: 70, to: 'rungtruc', sx: 140, sy: 640, label: 'Rừng Trúc' },
@@ -101,6 +102,11 @@
       ],
       npcs: ['thach_dau'],
       items: [['khoai', 4, 960, 640, 420], ['cui', 4, 960, 640, 420]],
+      monsters: [
+        { spr: 'khi_da', x: 700, y: 500, hp: 35, dmg: 7, speed: 75, xp: 18, coins: 6 },
+        { spr: 'khi_da', x: 1200, y: 900, hp: 35, dmg: 7, speed: 75, xp: 18, coins: 6 },
+        { spr: 'khi_da', x: 1600, y: 400, hp: 35, dmg: 7, speed: 75, xp: 18, coins: 6 }
+      ],
       portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 1800, sy: 800, label: 'Tây Tùy Đài' }],
       spawn: { x: 140, y: 640 }
     },
@@ -130,6 +136,11 @@
       ],
       npcs: ['linh_nhi'],
       items: [['cui', 3, 1750, 640, 180]],
+      monsters: [
+        { spr: 'ran_truc', x: 800, y: 400, hp: 30, dmg: 8, speed: 95, xp: 18, coins: 6 },
+        { spr: 'ran_truc', x: 1300, y: 900, hp: 30, dmg: 8, speed: 95, xp: 18, coins: 6 },
+        { spr: 'ran_truc', x: 1700, y: 300, hp: 30, dmg: 8, speed: 95, xp: 18, coins: 6 }
+      ],
       portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 120, sy: 900, label: 'Tây Tùy Đài' }],
       spawn: { x: 140, y: 640 }
     },
@@ -149,6 +160,11 @@
       ],
       npcs: ['ho_lao'],
       items: [],
+      monsters: [
+        { spr: 'bo_cap', x: 500, y: 600, hp: 45, dmg: 10, speed: 65, xp: 25, coins: 9 },
+        { spr: 'bo_cap', x: 1100, y: 900, hp: 45, dmg: 10, speed: 65, xp: 25, coins: 9 },
+        { spr: 'bo_cap', x: 1600, y: 500, hp: 45, dmg: 10, speed: 65, xp: 25, coins: 9 }
+      ],
       portals: [
         { x: 960, y: 50, r: 70, to: 'taytuydai', sx: 1400, sy: 1160, label: 'Tây Tùy Đài' },
         { x: 1870, y: 640, r: 70, to: 'daolua', sx: 110, sy: 640, label: 'Đảo Núi Lửa' }
@@ -171,6 +187,11 @@
       ],
       npcs: ['ba_ba'],
       items: [['tuyet_lien', 1, 960, 120, 10]],
+      monsters: [
+        { spr: 'soi_tuyet', x: 400, y: 700, hp: 55, dmg: 12, speed: 105, xp: 30, coins: 11 },
+        { spr: 'soi_tuyet', x: 1100, y: 800, hp: 55, dmg: 12, speed: 105, xp: 30, coins: 11 },
+        { spr: 'soi_tuyet', x: 1500, y: 600, hp: 55, dmg: 12, speed: 105, xp: 30, coins: 11 }
+      ],
       portals: [{ x: 960, y: 1230, r: 70, to: 'taytuydai', sx: 960, sy: 140, label: 'Tây Tùy Đài' }],
       spawn: { x: 960, y: 1140 }
     },
@@ -187,6 +208,12 @@
       ],
       npcs: [],
       items: [],
+      monsters: [
+        { spr: 'quai_nham', x: 700, y: 500, hp: 80, dmg: 14, speed: 60, xp: 40, coins: 15 },
+        { spr: 'quai_nham', x: 1100, y: 900, hp: 80, dmg: 14, speed: 60, xp: 40, coins: 15 },
+        { spr: 'quai_nham', x: 400, y: 1100, hp: 80, dmg: 14, speed: 60, xp: 40, coins: 15 },
+        { spr: 'hoa_ma', x: 1500, y: 750, hp: 320, dmg: 20, speed: 70, xp: 200, coins: 120, scale: 1.7 }
+      ],
       portals: [{ x: 50, y: 640, r: 70, to: 'samac', sx: 1780, sy: 640, label: 'Sa Mạc Vàng' }],
       spawn: { x: 140, y: 640 }
     }
@@ -255,6 +282,174 @@
     }
   }
 
+  // ---------- combat (G4) ----------
+  var WEAPONS = {
+    kiem_go: { name: 'Kiếm gỗ', dmg: 10 },
+    kiem_sat: { name: 'Kiếm sắt', dmg: 16, price: 60 },
+    kiem_han_thiet: { name: 'Hàn Thiết Kiếm', dmg: 24, price: 150 },
+    kiem_tuyet_lien: { name: 'Bảo kiếm Tuyết Liên', dmg: 34 }
+  };
+  var stats = { hp: 100, maxHp: 100, mp: 50, maxMp: 50,
+                level: 1, xp: 0, xpNext: 100, coins: 20,
+                weapon: 'kiem_go', banh_bao: 2 };
+  var MONSTERS = [];
+  var projectiles = [];
+  var floaters = [];
+  var slashT = 0, atkCd = 0, hurtFlash = 0;
+  var skillCd = [0, 0, 0];
+
+  function addFloater(x, y, txt, color) {
+    floaters.push({ x: x, y: y, txt: txt, color: color || '#fff', t: 1.1 });
+  }
+  function sfxSwing() { tone(300, 0.08, 'sawtooth', 0.03); tone(180, 0.1, 'sawtooth', 0.025, 0.04); }
+  function sfxSkill() { tone(500, 0.12, 'square', 0.04); tone(900, 0.16, 'square', 0.035, 0.08); }
+  function sfxHeal() { tone(440, 0.15, 'sine', 0.05); tone(660, 0.2, 'sine', 0.05, 0.1); }
+  function sfxHurt() { tone(140, 0.18, 'sawtooth', 0.05); }
+  function sfxKill() { tone(700, 0.1, 'square', 0.04); tone(350, 0.18, 'square', 0.04, 0.07); }
+
+  function gainXp(n) {
+    stats.xp += n;
+    while (stats.xp >= stats.xpNext) {
+      stats.xp -= stats.xpNext; stats.level++;
+      stats.xpNext = Math.round(stats.xpNext * 1.5);
+      stats.maxHp += 20; stats.hp = stats.maxHp;
+      stats.maxMp += 10; stats.mp = stats.maxMp;
+      sfxQuest();
+      toast('⬆ Lên cấp ' + stats.level + '! Máu và nội lực hồi đầy.', 3000);
+    }
+  }
+  function hurtMonster(m, dmg) {
+    if (m.dead) return;
+    m.hp -= dmg; m.hurtT = 0.25;
+    addFloater(m.x, m.y - 200 * m.scale, '-' + dmg, '#fca5a5');
+    if (m.hp <= 0) {
+      m.dead = true; m.deadT = 0.6;
+      stats.coins += m.coins;
+      addFloater(m.x, m.y - 235 * m.scale, '+' + m.coins + ' xu', '#fbbf24');
+      gainXp(m.xp);
+      sfxKill();
+    }
+  }
+  function hurtPlayer(dmg) {
+    if (stats.hp <= 0) return;
+    stats.hp -= dmg; hurtFlash = 0.35;
+    addFloater(player.x, player.y - 250, '-' + dmg, '#f87171');
+    sfxHurt();
+    if (stats.hp <= 0) {
+      stats.hp = 0;
+      stats.coins = Math.max(0, stats.coins - Math.floor(stats.coins * 0.1));
+      var s = MAPS[curMap].spawn;
+      player.x = s.x; player.y = s.y;
+      stats.hp = stats.maxHp; stats.mp = stats.maxMp;
+      toast('Ngươi gục ngã… tỉnh lại ở ' + MAPS[curMap].label + ' (mất 10% xu)', 3000);
+    }
+  }
+  function playerAttack() {
+    if (atkCd > 0 || dialogueOpen || shopOpen || invOpen) return;
+    atkCd = 0.45; slashT = 0.18;
+    sfxSwing();
+    var dmg = WEAPONS[stats.weapon].dmg + Math.floor(Math.random() * 4);
+    MONSTERS.forEach(function (m) {
+      if (m.dead) return;
+      var dx = m.x - player.x, dy = m.y - player.y;
+      if (dx * dx + dy * dy < 100 * 100) hurtMonster(m, dmg);
+    });
+  }
+  function castSkill(i) {
+    if (dialogueOpen || shopOpen || invOpen || skillCd[i] > 0) return;
+    if (i === 0) {
+      if (stats.mp < 15) { toast('Không đủ nội lực!'); return; }
+      stats.mp -= 15; skillCd[0] = 1.2;
+      projectiles.push({ x: player.x, y: player.y - 110,
+        vx: (player.face < 0 ? -1 : 1) * 520, vy: 0, dmg: 22, t: 1.2 });
+      sfxSkill();
+    } else if (i === 1) {
+      if (stats.mp < 20) { toast('Không đủ nội lực!'); return; }
+      if (stats.hp >= stats.maxHp) { toast('Máu đã đầy!'); return; }
+      stats.mp -= 20; skillCd[1] = 6;
+      var heal = Math.min(35, stats.maxHp - stats.hp);
+      stats.hp += heal;
+      addFloater(player.x, player.y - 250, '+' + heal, '#7ddf8e');
+      sfxHeal();
+    } else {
+      if (stats.mp < 30) { toast('Không đủ nội lực!'); return; }
+      stats.mp -= 30; skillCd[2] = 9; slashT = 0.3;
+      sfxSkill();
+      MONSTERS.forEach(function (m) {
+        if (m.dead) return;
+        var dx = m.x - player.x, dy = m.y - player.y;
+        if (dx * dx + dy * dy < 175 * 175) hurtMonster(m, 38);
+      });
+    }
+  }
+  function eatBanhBao() {
+    if (invOpen) return;
+    if (stats.banh_bao <= 0) { toast('Hết bánh bao! Mua ở tiệm Hồ Lão (Sa Mạc Vàng).'); return; }
+    if (stats.hp >= stats.maxHp) { toast('Máu đã đầy!'); return; }
+    stats.banh_bao--;
+    stats.hp = Math.min(stats.maxHp, stats.hp + 40);
+    sfxPickup(); toast('Ăn bánh bao: +40 máu');
+  }
+
+  // ---------- shop & inventory (G4) ----------
+  var SHOP = [
+    { id: 'banh_bao', name: 'Bánh bao', desc: 'Hồi 40 máu', price: 10 },
+    { id: 'kiem_sat', name: 'Kiếm sắt', desc: 'Sát thương 16', price: 60 },
+    { id: 'kiem_han_thiet', name: 'Hàn Thiết Kiếm', desc: 'Sát thương 24', price: 150 }
+  ];
+  var shopOpen = false, invOpen = false;
+  var shopEl = document.getElementById('shop'), shopList = document.getElementById('shop-list'),
+      shopCoins = document.getElementById('shop-coins');
+  var invEl = document.getElementById('inv'), invList = document.getElementById('inv-list');
+  function weaponRank(w) { return ['kiem_go', 'kiem_sat', 'kiem_han_thiet', 'kiem_tuyet_lien'].indexOf(w); }
+  function buyItem(id) {
+    var it = null;
+    SHOP.forEach(function (s) { if (s.id === id) it = s; });
+    if (!it) return;
+    if (id !== 'banh_bao' && weaponRank(id) <= weaponRank(stats.weapon)) { toast('Đã có kiếm tốt hơn rồi!'); return; }
+    if (stats.coins < it.price) { toast('Không đủ xu!'); sfxBlip(); return; }
+    stats.coins -= it.price;
+    if (id === 'banh_bao') stats.banh_bao++;
+    else stats.weapon = id;
+    sfxQuest(); toast('Đã mua: ' + it.name);
+    saveGame(); renderShop(); renderInv();
+  }
+  function renderShop() {
+    shopCoins.textContent = 'Xu của ngươi: 🪙 ' + stats.coins;
+    shopList.innerHTML = '';
+    SHOP.forEach(function (it) {
+      var owned = it.id !== 'banh_bao' && weaponRank(it.id) <= weaponRank(stats.weapon);
+      var row = document.createElement('div');
+      row.className = 'shop-row';
+      row.innerHTML = '<b>' + it.name + '</b><span>' + it.desc + '</span>';
+      var b = document.createElement('button');
+      b.textContent = owned ? 'Đã có' : 'Mua 🪙' + it.price;
+      b.disabled = owned;
+      b.addEventListener('click', function () { buyItem(it.id); });
+      row.appendChild(b);
+      shopList.appendChild(row);
+    });
+  }
+  function openShop() { shopOpen = true; renderShop(); shopEl.classList.add('show'); }
+  function closeShop() { shopOpen = false; shopEl.classList.remove('show'); }
+  function renderInv() {
+    invList.innerHTML = '';
+    var w = WEAPONS[stats.weapon];
+    invList.innerHTML =
+      '<div class="inv-row"><b>🗡️ ' + w.name + '</b><span>Sát thương ' + w.dmg + '</span></div>' +
+      '<div class="inv-row"><b>🥟 Bánh bao × ' + stats.banh_bao + '</b><span>Hồi 40 máu</span>' +
+      '<button id="inv-eat">Dùng (4)</button></div>' +
+      '<div class="inv-row"><b>🪙 Xu: ' + stats.coins + '</b><span>Cấp ' + stats.level + ' — ' + stats.xp + '/' + stats.xpNext + ' XP</span></div>';
+    document.getElementById('inv-eat').addEventListener('click', eatBanhBao);
+  }
+  function toggleInv() {
+    invOpen = !invOpen;
+    if (invOpen) renderInv();
+    invEl.classList.toggle('show', invOpen);
+  }
+  document.getElementById('shop-close').addEventListener('click', closeShop);
+  document.getElementById('inv-close').addEventListener('click', function () { if (invOpen) toggleInv(); });
+
   function loadMap(name, sx, sy, quiet) {
     var M = MAPS[name];
     curMap = name;
@@ -279,6 +474,13 @@
     });
     ITEMS = [];
     M.items.forEach(function (sp) { scatterItems(sp[0], sp[1], sp[2], sp[3], sp[4]); });
+    MONSTERS = (M.monsters || []).map(function (md) {
+      return { spr: md.spr, x: md.x, y: md.y, home: { x: md.x, y: md.y },
+               hp: md.hp, maxHp: md.hp, dmg: md.dmg, speed: md.speed,
+               xp: md.xp, coins: md.coins, scale: md.scale || 1,
+               atkCd: 0, wt: Math.random() * 2, tx: undefined, ty: undefined,
+               moving: false, dead: false, deadT: 0, hurtT: 0 };
+    });
     buildPads();
     player.x = sx; player.y = sy;
     if (typeof cam !== 'undefined') {
@@ -317,6 +519,12 @@
       var ddx = x - n.x, ddy = y - n.y;
       if (ddx * ddx + ddy * ddy < 38 * 38) return true;
     }
+    for (var mi = 0; mi < MONSTERS.length; mi++) {
+      var mm = MONSTERS[mi];
+      if (mm === self || mm.dead) continue;
+      var mdx = x - mm.x, mdy = y - mm.y;
+      if (mdx * mdx + mdy * mdy < 36 * 36) return true;
+    }
     if (self !== player) {
       var pdx = x - player.x, pdy = y - player.y;
       if (pdx * pdx + pdy * pdy < 36 * 36) return true;
@@ -340,11 +548,20 @@
     keys[e.key.toLowerCase()] = true;
     ac();
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].indexOf(e.key.toLowerCase()) >= 0) e.preventDefault();
-    if ((e.key === 'e' || e.key === 'E' || e.key === ' ') && !dialogueOpen) {
+    if ((e.key === 'e' || e.key === 'E' || e.key === ' ') && !dialogueOpen && !shopOpen && !invOpen) {
       var tgt = nearestTarget();
       if (tgt) openDialogueFor(tgt);
+      else if (e.key === ' ') playerAttack();
     }
     if ((e.key === 'j' || e.key === 'J') && !dialogueOpen) toggleQuestLog();
+    if ((e.key === 'i' || e.key === 'I') && !dialogueOpen && !shopOpen) toggleInv();
+    if (!dialogueOpen && !shopOpen && !invOpen) {
+      if (e.key === '1') castSkill(0);
+      if (e.key === '2') castSkill(1);
+      if (e.key === '3') castSkill(2);
+      if (e.key === '4') eatBanhBao();
+    }
+    if (e.key === 'Escape') { closeShop(); if (invOpen) toggleInv(); }
     if (!dialogueOpen && !emote) {
       if (e.key === 'q' || e.key === 'Q') emote = { spr: 'do_nhi_wave', until: t + 1.0 };
       if (e.key === 'f' || e.key === 'F') emote = { spr: 'do_nhi_laugh', until: t + 1.4 };
@@ -390,6 +607,7 @@
         b.textContent = c.label;
         b.addEventListener('click', function () {
           sfxBlip();
+          if (c.shop) { closeDialogue(); openShop(); return; }
           if (c.goto < 0) { closeDialogue(); return; }
           lineIdx = c.goto;
           showLine();
@@ -470,7 +688,10 @@
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         map: curMap, x: Math.round(player.x), y: Math.round(player.y), dayT: dayT,
-        quests: QUESTS.map(function (q) { return { id: q.id, have: q.have, state: q.state, thanked: q.thanked }; })
+        quests: QUESTS.map(function (q) { return { id: q.id, have: q.have, state: q.state, thanked: q.thanked }; }),
+        stats: { hp: Math.round(stats.hp), maxHp: stats.maxHp, mp: Math.round(stats.mp), maxMp: stats.maxMp,
+                 level: stats.level, xp: stats.xp, xpNext: stats.xpNext,
+                 coins: stats.coins, weapon: stats.weapon, banh_bao: stats.banh_bao }
       }));
     } catch (e) {}
   }
@@ -512,6 +733,10 @@
       sfxQuest();
       saveGame();
       toast('★ Hoàn thành: ' + q.name, 3000);
+      if (id === 'tuyet_lien' && weaponRank(stats.weapon) < weaponRank('kiem_tuyet_lien')) {
+        stats.weapon = 'kiem_tuyet_lien';
+        setTimeout(function () { toast('🗡️ Nhận được Bảo kiếm Tuyết Liên!', 3000); }, 3200);
+      }
     } else {
       toast('+1 ' + (ITEM_NAMES[id] || id) + ' (' + q.have + '/' + q.need + ')');
     }
@@ -625,6 +850,12 @@
         var q = questById(sq.id);
         if (q) { q.have = sq.have; q.state = sq.state; q.thanked = sq.thanked; }
       });
+      if (s.stats) {
+        var st = s.stats;
+        stats.hp = st.hp; stats.maxHp = st.maxHp; stats.mp = st.mp; stats.maxMp = st.maxMp;
+        stats.level = st.level; stats.xp = st.xp; stats.xpNext = st.xpNext;
+        stats.coins = st.coins; stats.weapon = st.weapon || 'kiem_go'; stats.banh_bao = st.banh_bao || 0;
+      }
       toast('Đã tải tiến trình đã lưu — ' + MAPS[curMap].label, 2600);
     } else {
       loadMap('taytuydai', MAPS.taytuydai.spawn.x, MAPS.taytuydai.spawn.y, true);
@@ -641,7 +872,7 @@
 
     // ----- update -----
     if (emote && t > emote.until) emote = null;
-    if (!dialogueOpen && !emote) {
+    if (!dialogueOpen && !emote && !shopOpen && !invOpen) {
       var mx = 0, my = 0;
       if (keys['a'] || keys['arrowleft']) mx -= 1;
       if (keys['d'] || keys['arrowright']) mx += 1;
@@ -682,6 +913,57 @@
         if (!collides(n.x, n.y + dy / d * sp, n)) n.y += dy / d * sp;
       }
     });
+    // combat update (G4)
+    atkCd -= dt; slashT -= dt; hurtFlash -= dt;
+    for (var csi = 0; csi < 3; csi++) skillCd[csi] -= dt;
+    stats.mp = Math.min(stats.maxMp, stats.mp + 6 * dt);
+    MONSTERS.forEach(function (m) {
+      if (m.dead) { m.deadT -= dt; return; }
+      if (m.hurtT > 0) m.hurtT -= dt;
+      m.atkCd -= dt;
+      var mdx = player.x - m.x, mdy = player.y - m.y, md = Math.hypot(mdx, mdy);
+      m.moving = false;
+      if (isNight()) { /* monsters rest at night */ }
+      else if (md < 240 && md > 54) {
+        var msp = m.speed * dt;
+        m.moving = true;
+        if (!collides(m.x + mdx / md * msp, m.y, m)) m.x += mdx / md * msp;
+        if (!collides(m.x, m.y + mdy / md * msp, m)) m.y += mdy / md * msp;
+      } else if (md <= 54) {
+        if (m.atkCd <= 0) { m.atkCd = 1.3; hurtPlayer(m.dmg); }
+      } else {
+        m.wt -= dt;
+        var wdx = (m.tx === undefined ? m.x : m.tx) - m.x,
+            wdy = (m.ty === undefined ? m.y : m.ty) - m.y,
+            wd = Math.hypot(wdx, wdy);
+        if (wd < 8 || m.wt <= 0) {
+          if (m.wt <= 0) {
+            if (Math.random() < 0.5) {
+              var wa = Math.random() * 6.283, wr = 30 + Math.random() * 90;
+              m.tx = m.home.x + Math.cos(wa) * wr;
+              m.ty = m.home.y + Math.sin(wa) * wr * 0.7;
+            }
+            m.wt = 1.6 + Math.random() * 2.6;
+          }
+        } else {
+          var wsp = 45 * dt;
+          m.moving = true;
+          if (!collides(m.x + wdx / wd * wsp, m.y, m)) m.x += wdx / wd * wsp;
+          if (!collides(m.x, m.y + wdy / wd * wsp, m)) m.y += wdy / wd * wsp;
+        }
+      }
+    });
+    projectiles.forEach(function (p) {
+      p.t -= dt; p.x += p.vx * dt; p.y += p.vy * dt;
+      MONSTERS.forEach(function (m) {
+        if (m.dead || p.t <= 0) return;
+        var pdx = m.x - p.x, pdy = (m.y - 100 * m.scale) - p.y;
+        if (pdx * pdx + pdy * pdy < 58 * 58) { p.t = 0; hurtMonster(m, p.dmg); }
+      });
+    });
+    projectiles = projectiles.filter(function (p) { return p.t > 0; });
+    floaters.forEach(function (f) { f.t -= dt; f.y -= 34 * dt; });
+    floaters = floaters.filter(function (f) { return f.t > 0; });
     // item pickup (G1)
     ITEMS.forEach(function (it) {
       if (it.taken) return;
@@ -882,8 +1164,53 @@
         }
       } });
     });
+    MONSTERS.forEach(function (m) {
+      if (m.dead && m.deadT <= 0) return;
+      ents.push({ y: m.y, f: function () {
+        ctx.save();
+        if (m.dead) ctx.globalAlpha = Math.max(0, m.deadT / 0.6);
+        if (m.hurtT > 0) ctx.translate((Math.random() - 0.5) * 8, 0);
+        var bob = m.moving ? Math.abs(Math.sin(t * 8)) * 3 : Math.sin(t * 2 + m.x) * 2;
+        var im = img[m.spr], mw = im.width * m.scale, mh = im.height * m.scale;
+        ctx.drawImage(im, m.x - mw / 2, m.y - mh + 14 - bob, mw, mh);
+        ctx.restore();
+        if (!m.dead && m.hp < m.maxHp) {
+          ctx.fillStyle = 'rgba(0,0,0,0.55)';
+          ctx.fillRect(m.x - 30, m.y - 200 * m.scale, 60, 7);
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(m.x - 30, m.y - 200 * m.scale, 60 * Math.max(0, m.hp / m.maxHp), 7);
+        }
+      } });
+    });
     ents.sort(function (a, b) { return a.y - b.y; });
     ents.forEach(function (e) { e.f(); });
+
+    // slash arc + projectiles + floaters (G4)
+    if (slashT > 0) {
+      ctx.save();
+      ctx.translate(player.x, player.y - 110);
+      ctx.scale(player.face, 1);
+      ctx.strokeStyle = 'rgba(255,255,255,' + Math.max(0, slashT / 0.3).toFixed(2) + ')';
+      ctx.lineWidth = 9; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(46, 0, 62, -1.1, 1.1); ctx.stroke();
+      ctx.strokeStyle = 'rgba(253,224,71,0.7)';
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(46, 0, 62, -1.1, 1.1); ctx.stroke();
+      ctx.restore();
+    }
+    projectiles.forEach(function (p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.fillStyle = 'rgba(125,211,252,0.35)';
+      ctx.beginPath(); ctx.ellipse(0, 0, 26, 12, 0, 0, 6.29); ctx.fill();
+      ctx.fillStyle = '#e0f2fe';
+      ctx.beginPath(); ctx.ellipse(0, 0, 14, 6, 0, 0, 6.29); ctx.fill();
+      ctx.restore();
+    });
+    floaters.forEach(function (f) {
+      ctx.fillStyle = f.color; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(f.txt, f.x, f.y);
+    });
 
     // petals
     ctx.fillStyle = 'rgba(247,168,196,0.85)';
@@ -923,6 +1250,20 @@
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
     var clockTxt = (isNight() ? '🌙 ' : '☀️ ') + (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm + '  ' + MAPS[curMap].label;
     ctx.fillText(clockTxt, 12, 26);
+
+    // HUD (G4)
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(10, 36, 224, 66);
+    ctx.fillStyle = '#3f6212'; ctx.fillRect(16, 44, 200, 12);
+    ctx.fillStyle = '#84cc16'; ctx.fillRect(16, 44, 200 * Math.max(0, stats.hp / stats.maxHp), 12);
+    ctx.fillStyle = '#1e3a8a'; ctx.fillRect(16, 60, 200, 10);
+    ctx.fillStyle = '#60a5fa'; ctx.fillRect(16, 60, 200 * Math.max(0, stats.mp / stats.maxMp), 10);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('Lv.' + stats.level + '  🪙' + stats.coins + '  🗡️' + WEAPONS[stats.weapon].name, 16, 94);
+    if (hurtFlash > 0) {
+      ctx.fillStyle = 'rgba(220,38,38,' + (hurtFlash * 0.5).toFixed(3) + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
 
     // fade transition (G2)
     if (fadeA > 0) {
