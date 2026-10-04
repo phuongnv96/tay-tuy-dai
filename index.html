@@ -79,6 +79,28 @@
   .ql-item span { float: right; font-size: 12px; color: #8fa3b8; }
   .ql-item.done span { color: #7ddf8e; }
   .ql-item p { font-size: 12px; color: #b9c6d4; margin-top: 4px; line-height: 1.45; }
+  #shop, #inv {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 380px; max-width: 92%;
+    background: rgba(16,24,32,.97); border: 1px solid rgba(245,214,123,.6);
+    border-radius: 12px; padding: 16px 18px; display: none; z-index: 6;
+  }
+  #shop.show, #inv.show { display: block; }
+  #shop h3, #inv h3 { font-size: 16px; color: #f5d67b; margin-bottom: 6px; letter-spacing: 2px; }
+  #shop-coins { font-size: 13px; color: #ffe9a8; margin-bottom: 10px; }
+  .shop-row, .inv-row {
+    display: flex; align-items: center; gap: 10px;
+    border-top: 1px solid rgba(255,255,255,.12); padding: 9px 0;
+  }
+  .shop-row b, .inv-row b { font-size: 14px; color: #ffe9a8; }
+  .shop-row span, .inv-row span { font-size: 12px; color: #8fa3b8; flex: 1; }
+  .shop-row button, .inv-row button, #shop-close, #inv-close {
+    background: #7c5c2e; color: #fff; border: none; cursor: pointer;
+    font-size: 13px; padding: 8px 16px; border-radius: 6px;
+  }
+  .shop-row button:hover:not(:disabled), #shop-close:hover, #inv-close:hover, .inv-row button:hover { background: #96702f; }
+  .shop-row button:disabled { opacity: .45; cursor: default; }
+  #shop-close, #inv-close { margin-top: 10px; width: 100%; }
   .controls { margin-top: 12px; font-size: 13px; color: #8fa3b8; }
   .controls b { color: #f5d67b; }
 </style>
@@ -91,6 +113,8 @@
     <div id="hint">Nhấn <b>E</b> để nói chuyện với sư phụ</div>
     <div id="toast"></div>
     <div id="questlog"><h3>📜 NHIỆM VỤ</h3><div id="ql-list"></div></div>
+    <div id="shop"><h3>🛒 TIỆM HỒ LÃO</h3><div id="shop-coins"></div><div id="shop-list"></div><button id="shop-close">Đóng</button></div>
+    <div id="inv"><h3>🎒 TÚI ĐỒ</h3><div id="inv-list"></div><button id="inv-close">Đóng</button></div>
     <div id="dialogue">
       <div id="dlg-name">Sư Phụ Yixuan</div>
       <div id="dlg-box">
@@ -103,12 +127,13 @@
       </div>
     </div>
   </div>
-  <div class="controls"><b>WASD / ←↑↓→</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện &nbsp;•&nbsp; <b>J</b> nhiệm vụ &nbsp;•&nbsp; <b>Q</b> vẫy tay &nbsp;•&nbsp; <b>F</b> cười</div>
+  <div class="controls"><b>WASD</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện &nbsp;•&nbsp; <b>Space</b> đánh &nbsp;•&nbsp; <b>1/2/3</b> kỹ năng &nbsp;•&nbsp; <b>4</b> bánh bao &nbsp;•&nbsp; <b>J</b> nhiệm vụ &nbsp;•&nbsp; <b>I</b> túi đồ</div>
   <script src="assets_chars.js"></script>
   <script src="assets_env1.js"></script>
   <script src="assets_env2.js"></script>
   <script src="assets_env3.js"></script>
   <script src="assets_env4.js"></script>
+  <script src="assets_mons.js"></script>
   <script src="data.js"></script>
   <script src="game.js"></script>
 </body>
