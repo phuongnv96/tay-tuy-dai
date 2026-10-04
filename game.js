@@ -10,7 +10,8 @@
   var WORLD_W = 1920, WORLD_H = 1280;
 
   // ---------- sprites ----------
-  var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'su_phu', 'cay_phong', 'cau_da', 'den_da', 'anh_dao'];
+  var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'do_nhi_wave', 'do_nhi_laugh',
+                     'do_nhi_talk', 'su_phu', 'su_phu_talk', 'cay_phong', 'cau_da', 'den_da', 'anh_dao'];
   var img = {}, loaded = 0;
   spriteNames.forEach(function (n) {
     var im = new Image();
@@ -67,10 +68,15 @@
 
   // ---------- input ----------
   var keys = {};
+  var emote = null; // {spr, until}
   window.addEventListener('keydown', function (e) {
     keys[e.key.toLowerCase()] = true;
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].indexOf(e.key.toLowerCase()) >= 0) e.preventDefault();
     if ((e.key === 'e' || e.key === 'E' || e.key === ' ') && nearMaster() && !dialogueOpen) openDialogue();
+    if (!dialogueOpen && !emote) {
+      if (e.key === 'q' || e.key === 'Q') emote = { spr: 'do_nhi_wave', until: t + 1.0 };
+      if (e.key === 'f' || e.key === 'F') emote = { spr: 'do_nhi_laugh', until: t + 1.4 };
+    }
   });
   window.addEventListener('keyup', function (e) { keys[e.key.toLowerCase()] = false; });
 
@@ -82,21 +88,30 @@
   // ---------- dialogue ----------
   var dialogueOpen = false, lineIdx = 0;
   var lines = [
-    'Ừm, ta nghe đây, đồ nhi.',
-    'Ngươi đã vượt rừng phong đỏ, qua cầu đá bắc ngang suối, đến được Tây Tùy Đài… quả là có duyên.',
-    'Từ hôm nay, ngươi chính thức là đệ tử của ta. Cứ đi dạo quanh đây cho quen đường, rồi quay lại gặp ta.'
+    { who: 'master', name: 'Sư Phụ Yixuan', text: 'Ừm, ta nghe đây, đồ nhi.' },
+    { who: 'master', name: 'Sư Phụ Yixuan', text: 'Ngươi đã vượt rừng phong đỏ, qua cầu đá bắc ngang suối, đến được Tây Tùy Đài… quả là có duyên.' },
+    { who: 'master', name: 'Sư Phụ Yixuan', text: 'Từ hôm nay, ngươi chính thức là đệ tử của ta. Cứ đi dạo quanh đây cho quen đường, rồi quay lại gặp ta.' },
+    { who: 'player', name: 'Nguyên', text: 'Đệ tử bái kiến sư phụ!' }
   ];
   var dlg = document.getElementById('dialogue');
+  var dlgName = document.getElementById('dlg-name');
   var dlgText = document.getElementById('dlg-text');
   var btnNext = document.getElementById('btn-next');
   var btnClose = document.getElementById('btn-close');
   var hint = document.getElementById('hint');
 
+  function showLine() {
+    var L = lines[lineIdx];
+    dlgName.textContent = L.name;
+    dlgName.style.background = L.who === 'master' ? '#2f9e44' : '#2b6cb0';
+    dlgText.textContent = L.text;
+  }
   function openDialogue() {
     dialogueOpen = true; lineIdx = 0;
-    dlgText.textContent = lines[0];
+    showLine();
     btnNext.style.display = '';
     dlg.classList.add('show');
+    emote = { spr: 'do_nhi_wave', until: t + 1.0 }; // greet the master
   }
   function closeDialogue() {
     dialogueOpen = false;
@@ -105,7 +120,7 @@
   btnNext.addEventListener('click', function () {
     lineIdx++;
     if (lineIdx >= lines.length) { closeDialogue(); return; }
-    dlgText.textContent = lines[lineIdx];
+    showLine();
     if (lineIdx === lines.length - 1) btnNext.style.display = 'none';
   });
   btnClose.addEventListener('click', closeDialogue);
@@ -162,7 +177,8 @@
     last = ts; t += dt;
 
     // ----- update -----
-    if (!dialogueOpen) {
+    if (emote && t > emote.until) emote = null;
+    if (!dialogueOpen && !emote) {
       var mx = 0, my = 0;
       if (keys['a'] || keys['arrowleft']) mx -= 1;
       if (keys['d'] || keys['arrowright']) mx += 1;
@@ -271,14 +287,20 @@
     });
     ents.push({ y: master.y, f: function () {
       var bob = Math.sin(t * 1.4) * 3;
-      drawSprite('su_phu', master.x, master.y + bob, false);
+      var mspr = 'su_phu';
+      if (dialogueOpen && lines[lineIdx].who === 'master') {
+        mspr = (Math.floor(t * 3.5) % 2) ? 'su_phu_talk' : 'su_phu'; // talking
+      }
+      drawSprite(mspr, master.x, master.y + bob, false);
       ctx.fillStyle = '#2f9e44'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('Sư Phụ Yixuan', master.x, master.y - 228 + bob);
     } });
     ents.push({ y: player.y, f: function () {
       var bob = player.moving ? Math.abs(Math.sin(t * 10)) * 4 : Math.sin(t * 2) * 2;
       var spr = 'do_nhi';
-      if (player.moving) {
+      if (emote) spr = emote.spr;
+      else if (dialogueOpen && lines[lineIdx].who === 'player') spr = 'do_nhi_talk';
+      else if (player.moving) {
         var frames = ['do_nhi_w1', 'do_nhi', 'do_nhi_w2', 'do_nhi'];
         spr = frames[Math.floor(t * 8) % 4];
       }
