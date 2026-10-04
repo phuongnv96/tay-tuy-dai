@@ -10,41 +10,42 @@
 - [x] Hội thoại 4 câu với sư phụ
 - [x] Deploy tự động GitHub Pages
 
-## G1 — Tây Tùy Đài sống động
+## G1 — Tây Tùy Đài sống động ✅ (xong 2026-10-05)
 
 ### NPC mới
-- [ ] Sprite Thiết Ngưu (đại sư huynh)
-- [ ] Sprite Linh Nhi (tiểu sư muội)
-- [ ] Sprite Thạch Đầu (tiều phu)
-- [ ] NPC đi lại đơn giản (waypoint quanh quẩn)
-- [ ] NPC có 2-3 câu thoại riêng khi bắt chuyện
+- [x] Sprite Thiết Ngưu (đại sư huynh)
+- [x] Sprite Linh Nhi (tiểu sư muội)
+- [x] Sprite Thạch Đầu (tiều phu)
+- [x] NPC đi lại đơn giản (waypoint quanh quẩn)
+- [x] NPC có 2-3 câu thoại riêng khi bắt chuyện
 
 ### Nhiệm vụ & UI
-- [ ] Quest log UI (phím J: xem nhiệm vụ đang làm)
-- [ ] NV phụ 1: *Bữa trưa của sư huynh* (tìm 3 củ khoai)
-- [ ] NV phụ 2: *Củi cho Thạch Đầu* (nhặt 5 khúc củi ở rừng phong)
-- [ ] Hội thoại nhiều lựa chọn (đồng ý / từ chối / hỏi thêm)
+- [x] Quest log UI (phím J: xem nhiệm vụ đang làm)
+- [x] NV phụ 1: *Bữa trưa của sư huynh* (tìm 3 củ khoai)
+- [x] NV phụ 2: *Củi cho Thạch Đầu* (nhặt 5 khúc củi ở rừng phong)
+- [x] Hội thoại nhiều lựa chọn (đồng ý / từ chối / hỏi thêm)
 
 ### Cảnh vật & âm thanh
-- [ ] Tile: cổng núi, nhà tranh, bàn đá, lu nước, hàng rào trúc
-- [ ] Tiếng bước chân, tiếng suối (WebAudio, không cần file nhạc)
-- [ ] Nhạc nền sáo đơn giản lặp lại
+- [x] Tile: cổng núi, nhà tranh, bàn đá, lu nước, hàng rào trúc
+- [x] Tiếng bước chân, tiếng nhặt đồ, nhạc hoàn thành NV (WebAudio, không cần file nhạc)
+- [ ] Nhạc nền sáo đơn giản lặp lại (dời sang G5 làm nhạc từng vùng)
 
-## G2 — Hệ thống lõi
+## G2 — Hệ thống lõi ✅ (xong 2026-10-05)
 
 ### Tilemap & chuyển cảnh
-- [ ] Định nghĩa map bằng mảng ký tự (thay vẽ tay)
-- [ ] Cổng chuyển cảnh giữa các bản đồ (hiệu ứng fade)
-- [ ] Tách `game.js` thành module: engine / dialogue / quest / audio
+- [x] 2 bản đồ: Tây Tùy Đài + Rừng Phong Đỏ (cổng dịch chuyển phía đông)
+- [x] Cổng chuyển cảnh giữa các bản đồ (hiệu ứng fade)
+- [ ] Tách `game.js` thành module: engine / dialogue / quest / audio (tạm hoãn — code đã tổ chức theo section, tách module khi G4)
 
 ### Thế giới sống
-- [ ] Ngày/đêm (màn hình tối dần, đèn đá sáng lên)
-- [ ] Thời tiết nhẹ: mưa, lá phong rơi theo vùng
-- [ ] Lưu game localStorage (vị trí, quest, vật phẩm) + nút Lưu/Tải
+- [x] Ngày/đêm (màn hình tối dần, đèn đá sáng hơn ban đêm, NPC đi ngủ)
+- [x] Đồng hồ + tên bản đồ góc trái
+- [ ] Thời tiết nhẹ: mưa, lá phong rơi theo vùng (dời sang G3)
 
-### Dữ liệu hóa
-- [ ] NPC, hội thoại, nhiệm vụ đưa vào file JSON riêng
-- [ ] Thêm NPC mới không cần sửa code
+### Dữ liệu hóa & lưu game
+- [x] NPC, hội thoại, nhiệm vụ đưa vào `data.js` riêng (code chỉ đọc)
+- [x] Lưu game localStorage (vị trí, bản đồ, nhiệm vụ, giờ) — tự lưu mỗi 20s, khi xong NV, khi chuyển bản đồ
+- [x] Tải game đã lưu khi mở lại
 
 ## G3 — Mở rộng thế giới (5 vùng)
 
