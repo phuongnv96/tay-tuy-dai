@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tây Tùy Đài — Thế giới của Siu</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #101820; color: #e8e8e8;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 18px;
+  }
+  h1 { font-size: 22px; letter-spacing: 6px; margin-bottom: 4px; color: #f5d67b; }
+  .sub { font-size: 13px; color: #8fa3b8; margin-bottom: 12px; }
+  #wrap { position: relative; }
+  canvas {
+    display: block; border-radius: 8px;
+    box-shadow: 0 12px 48px rgba(0,0,0,.6);
+    max-width: 96vw; height: auto;
+  }
+  #hint {
+    position: absolute; left: 50%; bottom: 86px; transform: translateX(-50%);
+    background: rgba(0,0,0,.72); color: #ffe9a8;
+    padding: 8px 18px; border-radius: 20px; font-size: 14px;
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+    border: 1px solid rgba(245,214,123,.5); white-space: nowrap;
+  }
+  #hint.show { opacity: 1; }
+  #dialogue {
+    position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
+    width: 620px; max-width: 92%;
+    display: none;
+  }
+  #dialogue.show { display: block; }
+  #dlg-name {
+    display: inline-block; background: #2f9e44; color: #fff;
+    font-weight: 700; font-size: 14px; padding: 6px 16px;
+    border-radius: 6px 6px 0 0; margin-left: 18px;
+  }
+  #dlg-box {
+    background: rgba(245,240,225,.97); color: #333;
+    border-radius: 10px; padding: 16px 18px 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.5);
+    border: 2px solid #c9a86a;
+  }
+  #dlg-text { font-size: 16px; line-height: 1.55; min-height: 52px; }
+  #dlg-btns { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
+  #dlg-btns button {
+    background: #2b3542; color: #fff; border: none; cursor: pointer;
+    font-size: 15px; padding: 10px 26px; border-radius: 6px;
+  }
+  #dlg-btns button:hover { background: #3b4a5e; }
+  .controls { margin-top: 12px; font-size: 13px; color: #8fa3b8; }
+  .controls b { color: #f5d67b; }
+</style>
+</head>
+<body>
+  <h1>TÂY TÙY ĐÀI</h1>
+  <div class="sub">thế giới game pixel-art kiếm hiệp của Siu — bản prototype</div>
+  <div id="wrap">
+    <canvas id="game" width="960" height="600"></canvas>
+    <div id="hint">Nhấn <b>E</b> để nói chuyện với sư phụ</div>
+    <div id="dialogue">
+      <div id="dlg-name">Sư Phụ Yixuan</div>
+      <div id="dlg-box">
+        <div id="dlg-text"></div>
+        <div id="dlg-btns">
+          <button id="btn-next">Tiếp tục ▸</button>
+          <button id="btn-close">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="controls"><b>WASD / ←↑↓→</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện</div>
+  <script src="assets_chars.js"></script>
+  <script src="assets_env1.js"></script>
+  <script src="assets_env2.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
