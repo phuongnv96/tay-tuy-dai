@@ -6,7 +6,10 @@ window.DATA = {
     { id: 'la_phong', name: 'Lá phong đỏ', desc: 'Hái 5 lá phong cổ thụ ở Rừng Phong Đỏ (cổng phía đông) cho sư phụ luyện đan.', need: 5, type: 'collect' },
     { id: 'sao_truc', name: 'Tiếng sáo trong trúc', desc: 'Tìm người thổi sáo trong Rừng Trúc (cổng phía tây).', need: 1, type: 'talk', target: 'linh_nhi' },
     { id: 'ho_tong', name: 'Thương đội sa mạc', desc: 'Gặp thương nhân Hồ Lão ở Sa Mạc Vàng (cổng phía nam).', need: 1, type: 'talk', target: 'ho_lao' },
-    { id: 'tuyet_lien', name: 'Thí luyện Tuyết Sơn', desc: 'Hái Tuyết Liên nghìn năm trên đỉnh Núi Tuyết (cổng phía bắc).', need: 1, type: 'collect' }
+    { id: 'tuyet_lien', name: 'Thí luyện Tuyết Sơn', desc: 'Hái Tuyết Liên nghìn năm trên đỉnh Núi Tuyết (cổng phía bắc).', need: 1, type: 'collect' },
+    { id: 'cau_da_gay', name: 'Cầu đá gãy', desc: 'Nhờ Thạch Đầu sửa lại cầu đá (nói chuyện với Thạch Đầu).', need: 1, type: 'talk', target: 'thach_dau' },
+    { id: 'di_bien', name: 'Dị biến đảo lửa', desc: 'Tiêu diệt Hỏa Ma trên Đảo Núi Lửa (đi thuyền từ Sa Mạc Vàng).', need: 1, type: 'kill', target: 'hoa_ma' },
+    { id: 'dai_hoi', name: 'Đại hội võ lâm', desc: 'Về gặp sư phụ ở Tây Tùy Đài.', need: 1, type: 'talk', target: 'master' }
   ],
   dialogues: {
     master: [
@@ -71,6 +74,15 @@ window.DATA = {
     ],
     ba_ba_done: [
       { who: 'npc', name: 'Tuyết Sơn Bà Bà', text: 'Tuyết Sơn quanh năm lạnh lẽo, hiếm khách lắm. Ở lại uống chén trà nóng nhé.' }
+    ],
+    master_daihoi: [
+      { who: 'master', name: 'Sư Phụ Yixuan', text: 'Đồ nhi, dị biến đảo lửa đã được dẹp yên. Hỏa Ma bị tiêu diệt — công lao của ngươi không nhỏ.' },
+      { who: 'master', name: 'Sư Phụ Yixuan', text: 'Ít ngày nữa, Đại hội võ lâm sẽ được tổ chức. Ta muốn ngươi đại diện Tây Tùy Đài tham dự.' },
+      { who: 'player', name: 'Nguyên', text: 'Đệ tử nhất định không phụ lòng sư phụ!' }
+    ],
+    master_finale: [
+      { who: 'master', name: 'Sư Phụ Yixuan', text: 'Ha ha, tốt lắm! Từ hôm nay, ngươi chính thức là đệ tử chân truyền của Tây Tùy Đài.' },
+      { who: 'master', name: 'Sư Phụ Yixuan', text: 'Giang hồ rộng lớn… hãy đi đi, và viết nên truyền kỳ của riêng mình!' }
     ]
   }
 };
