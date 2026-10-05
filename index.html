@@ -14,11 +14,25 @@
   }
   h1 { font-size: 22px; letter-spacing: 6px; margin-bottom: 4px; color: #f5d67b; }
   .sub { font-size: 13px; color: #8fa3b8; margin-bottom: 12px; }
-  #wrap { position: relative; }
+  #wrap { position: relative; width: min(98vw, calc((100vh - 250px) * 1.6)); width: min(98vw, calc((100dvh - 250px) * 1.6)); }
+  #wrap:fullscreen { width: 100vw; height: 100vh; height: 100dvh; display: flex; align-items: center; justify-content: center; background: #0a0e14; }
   canvas {
-    display: block; border-radius: 8px;
+    display: block; width: 100%; height: auto; border-radius: 8px;
     box-shadow: 0 12px 48px rgba(0,0,0,.6);
-    max-width: 96vw; height: auto;
+    image-rendering: pixelated;
+  }
+  #wrap:fullscreen canvas { width: min(100vw, calc(100vh * 1.6)); width: min(100vw, calc(100dvh * 1.6)); border-radius: 0; }
+  #btn-fs {
+    background: #2b3542; color: #f5d67b; border: 1px solid rgba(245,214,123,.5);
+    cursor: pointer; font-size: 13px; padding: 8px 18px; border-radius: 6px; margin-left: 10px;
+  }
+  #btn-fs:hover { background: #3b4a5e; }
+  @media (max-width: 700px) {
+    body { padding: 8px; }
+    h1 { font-size: 17px; letter-spacing: 3px; }
+    .sub { font-size: 11px; margin-bottom: 8px; }
+    #wrap { width: min(100vw, calc((100vh - 200px) * 1.6)); width: min(100vw, calc((100dvh - 200px) * 1.6)); }
+    .controls { font-size: 11px; }
   }
   #hint {
     position: absolute; left: 50%; bottom: 86px; transform: translateX(-50%);
@@ -177,7 +191,7 @@
       </div>
     </div>
   </div>
-  <div class="controls"><b>WASD</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện &nbsp;•&nbsp; <b>Space</b> đánh &nbsp;•&nbsp; <b>1/2/3</b> kỹ năng &nbsp;•&nbsp; <b>4</b> bánh bao &nbsp;•&nbsp; <b>J</b> nhiệm vụ &nbsp;•&nbsp; <b>I</b> túi đồ &nbsp;•&nbsp; <b>M</b> nhạc</div>
+  <div class="controls"><b>WASD</b> di chuyển &nbsp;•&nbsp; <b>E</b> nói chuyện &nbsp;•&nbsp; <b>Space</b> đánh &nbsp;•&nbsp; <b>1/2/3</b> kỹ năng &nbsp;•&nbsp; <b>4</b> bánh bao &nbsp;•&nbsp; <b>J</b> nhiệm vụ &nbsp;•&nbsp; <b>I</b> túi đồ &nbsp;•&nbsp; <b>M</b> nhạc <button id="btn-fs">⛶ Toàn màn hình</button></div>
   <div id="title" class="show">
     <h1>TÂY TÙY ĐÀI</h1>
     <div class="tsub">thế giới kiếm hiệp của Siu — chương 1</div>
@@ -201,5 +215,16 @@
   <script src="assets_mons.js"></script>
   <script src="data.js"></script>
   <script src="game.js"></script>
+  <script>
+    document.getElementById('btn-fs').addEventListener('click', function () {
+      var w = document.getElementById('wrap');
+      if (document.fullscreenElement) { document.exitFullscreen(); return; }
+      if (w.requestFullscreen) w.requestFullscreen();
+      else if (w.webkitRequestFullscreen) w.webkitRequestFullscreen();
+    });
+    document.addEventListener('fullscreenchange', function () {
+      document.getElementById('btn-fs').textContent = document.fullscreenElement ? '⛶ Thoát toàn màn hình' : '⛶ Toàn màn hình';
+    });
+  </script>
 </body>
 </html>
