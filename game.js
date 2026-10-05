@@ -6,8 +6,9 @@
   var ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
 
-  var W = 960, H = 600;          // viewport
+  var W = 1280, H = 800;         // viewport — bigger view of the world
   var WORLD_W = 1920, WORLD_H = 1280;
+  var CHAR_SCALE = 0.62, TREE_SCALE = 0.75, TILE_SCALE = 0.75; // smaller sprites, bigger map feel
 
   // ---------- sprites ----------
   var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'do_nhi_wave', 'do_nhi_laugh',
@@ -36,7 +37,7 @@
   var pond = null, stream = null, dais = null, bridgeX0 = 0, bridgeX1 = 0;
   var master = null;
   var trees = [], lanterns = [], tiles = [], blockers = [];
-  var player = { x: 960, y: 1080, speed: 265, face: 1, moving: false };
+  var player = { x: 960, y: 1080, speed: 290, face: 1, moving: false };
   var curMap = 'taytuydai';
 
   var MAPS = {
@@ -351,11 +352,11 @@
   function hurtMonster(m, dmg) {
     if (m.dead) return;
     m.hp -= dmg; m.hurtT = 0.25;
-    addFloater(m.x, m.y - 200 * m.scale, '-' + dmg, '#fca5a5');
+    addFloater(m.x, m.y - 140 * m.scale, '-' + dmg, '#fca5a5');
     if (m.hp <= 0) {
       m.dead = true; m.deadT = 0.6;
       stats.coins += m.coins;
-      addFloater(m.x, m.y - 235 * m.scale, '+' + m.coins + ' xu', '#fbbf24');
+      addFloater(m.x, m.y - 165 * m.scale, '+' + m.coins + ' xu', '#fbbf24');
       gainXp(m.xp);
       questKill(m.spr);
       sfxKill();
@@ -364,7 +365,7 @@
   function hurtPlayer(dmg) {
     if (stats.hp <= 0) return;
     stats.hp -= dmg; hurtFlash = 0.35;
-    addFloater(player.x, player.y - 250, '-' + dmg, '#f87171');
+    addFloater(player.x, player.y - 165, '-' + dmg, '#f87171');
     sfxHurt();
     if (stats.hp <= 0) {
       stats.hp = 0;
@@ -391,7 +392,7 @@
     if (i === 0) {
       if (stats.mp < 15) { toast('Không đủ nội lực!'); return; }
       stats.mp -= 15; skillCd[0] = 1.2;
-      projectiles.push({ x: player.x, y: player.y - 110,
+      projectiles.push({ x: player.x, y: player.y - 72,
         vx: (player.face < 0 ? -1 : 1) * 520, vy: 0, dmg: 22, t: 1.2 });
       sfxSkill();
     } else if (i === 1) {
@@ -400,7 +401,7 @@
       stats.mp -= 20; skillCd[1] = 6;
       var heal = Math.min(35, stats.maxHp - stats.hp);
       stats.hp += heal;
-      addFloater(player.x, player.y - 250, '+' + heal, '#7ddf8e');
+      addFloater(player.x, player.y - 165, '+' + heal, '#7ddf8e');
       sfxHeal();
     } else {
       if (stats.mp < 30) { toast('Không đủ nội lực!'); return; }
@@ -490,11 +491,11 @@
     master = M.master ? { x: M.master.x, y: M.master.y } : null;
     trees = M.trees; lanterns = M.lanterns; tiles = M.tiles;
     blockers = [];
-    trees.forEach(function (t) { blockers.push({ x: t.x, y: t.y, r: 48 }); });
-    lanterns.forEach(function (l) { blockers.push({ x: l.x, y: l.y, r: 18 }); });
-    if (master) blockers.push({ x: master.x, y: master.y, r: 36 });
+    trees.forEach(function (t) { blockers.push({ x: t.x, y: t.y, r: 40 }); });
+    lanterns.forEach(function (l) { blockers.push({ x: l.x, y: l.y, r: 14 }); });
+    if (master) blockers.push({ x: master.x, y: master.y, r: 30 });
     tiles.forEach(function (tl) {
-      (tl.blocks || []).forEach(function (b) { blockers.push({ x: tl.x + b.dx, y: tl.y, r: b.r }); });
+      (tl.blocks || []).forEach(function (b) { blockers.push({ x: tl.x + b.dx * TILE_SCALE, y: tl.y, r: b.r * TILE_SCALE }); });
     });
     NPCS = M.npcs.map(function (id) {
       var d = NPC_DEFS[id];
@@ -879,13 +880,14 @@
     pathStones.push({ x: 960 + Math.sin(sy * 0.01) * 26 + (rnd() - 0.5) * 14, y: sy, r: 30 + rnd() * 10 });
   }
 
-  function drawSprite(name, x, y, flip) {
-    var im = img[name], w = im.width, h = im.height;
+  function drawSprite(name, x, y, flip, scale) {
+    var im = img[name], s = scale || 1, w = im.width * s, h = im.height * s;
     ctx.save();
     ctx.translate(Math.round(x), Math.round(y));
     if (flip) ctx.scale(-1, 1);
-    ctx.drawImage(im, -w / 2, -h + 14, w, h);
+    ctx.drawImage(im, -w / 2, -h + 14 * s, w, h);
     ctx.restore();
+    return h;
   }
 
   function drawItem(it) {
@@ -1242,7 +1244,7 @@
     // bridge (drawn flat over stream)
     if (stream) {
     (function () {
-      var im = img['cau_da'], bw = 560, bh = im.height * (560 / im.width);
+      var im = img['cau_da'], bw = 520, bh = im.height * (520 / im.width);
       ctx.drawImage(im, 1450 - bw / 2, 800 - bh / 2, bw, bh);
     })();
     }
@@ -1263,20 +1265,21 @@
     var ents = [];
     tiles.forEach(function (tl) {
       ents.push({ y: tl.y, f: function () {
-        var im = img[tl.s], h = im.height * (tl.w / im.width);
-        ctx.drawImage(im, tl.x - tl.w / 2, tl.y - h + 14, tl.w, h);
+        var im = img[tl.s], tw = tl.w * TILE_SCALE, h = im.height * (tw / im.width);
+        ctx.drawImage(im, tl.x - tw / 2, tl.y - h + 14 * TILE_SCALE, tw, h);
       } });
     });
-    trees.forEach(function (tr) { ents.push({ y: tr.y, f: function () { drawSprite(tr.s, tr.x, tr.y, false); } }); });
+    trees.forEach(function (tr) { ents.push({ y: tr.y, f: function () { drawSprite(tr.s, tr.x, tr.y, false, TREE_SCALE); } }); });
     lanterns.forEach(function (l) {
       ents.push({ y: l.y, f: function () {
-        drawSprite('den_da', l.x, l.y, false);
+        drawSprite('den_da', l.x, l.y, false, TILE_SCALE);
         var la = 0.3 + (1 - daylight()) * 0.45; // brighter at night
-        var gl = ctx.createRadialGradient(l.x, l.y - 105, 4, l.x, l.y - 105, 46);
+        var ly = l.y - 105 * TILE_SCALE, lr = 46 * TILE_SCALE;
+        var gl = ctx.createRadialGradient(l.x, ly, 4, l.x, ly, lr);
         gl.addColorStop(0, 'rgba(255,200,90,' + la.toFixed(2) + ')');
         gl.addColorStop(1, 'rgba(255,200,90,0)');
         ctx.fillStyle = gl;
-        ctx.beginPath(); ctx.arc(l.x, l.y - 105, 46, 0, 6.29); ctx.fill();
+        ctx.beginPath(); ctx.arc(l.x, ly, lr, 0, 6.29); ctx.fill();
       } });
     });
     MAPS[curMap].portals.forEach(function (p) {
@@ -1289,9 +1292,9 @@
       if (dialogueOpen && talkTarget && talkTarget.isMaster && dlgLines[lineIdx].who === 'master') {
         mspr = (Math.floor(t * 3.5) % 2) ? 'su_phu_talk' : 'su_phu'; // talking
       }
-      drawSprite(mspr, master.x, master.y + bob, false);
+      var mh = drawSprite(mspr, master.x, master.y + bob, false, CHAR_SCALE);
       ctx.fillStyle = '#2f9e44'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('Sư Phụ Yixuan', master.x, master.y - 228 + bob);
+      ctx.fillText('Sư Phụ Yixuan', master.x, master.y + bob - mh - 4);
     } });
     }
     ents.push({ y: player.y, f: function () {
@@ -1307,9 +1310,9 @@
         spr = frames[Math.floor(t * 8) % 4];
       }
       else spr = (Math.floor(t * 1.4) % 4 === 3) ? 'do_nhi_idle' : 'do_nhi';
-      drawSprite(spr, player.x, player.y - bob, player.face < 0);
+      var ph = drawSprite(spr, player.x, player.y - bob, player.face < 0, CHAR_SCALE);
       ctx.fillStyle = '#e8f4ff'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('Nguyên', player.x, player.y - 228 - bob);
+      ctx.fillText('Nguyên', player.x, player.y - bob - ph - 4);
     } });
     ITEMS.forEach(function (it) {
       if (it.taken) return;
@@ -1324,16 +1327,16 @@
           wspr = n.walk[seq[Math.floor(t * 7) % 4]];
           bob = Math.abs(Math.sin(t * 7)) * 3;
         }
-        drawSprite(wspr, n.x, n.y - bob, n.face < 0);
+        var nh = drawSprite(wspr, n.x, n.y - bob, n.face < 0, CHAR_SCALE);
         ctx.fillStyle = n.color; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
-        ctx.fillText(n.name, n.x, n.y - 218 - bob);
+        ctx.fillText(n.name, n.x, n.y - bob - nh - 4);
         if (isNight()) {
           ctx.fillStyle = '#a5b4fc'; ctx.font = 'bold 16px sans-serif';
-          ctx.fillText('z z', n.x + 30, n.y - 230 - bob + Math.sin(t * 2) * 3);
+          ctx.fillText('z z', n.x + 30, n.y - bob - nh - 16 + Math.sin(t * 2) * 3);
         } else if (n.questId && questById(n.questId).state === 'active') {
           var qb = Math.sin(t * 4) * 4;
           ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 20px sans-serif';
-          ctx.fillText('!', n.x + 46, n.y - 206 + qb - bob);
+          ctx.fillText('!', n.x + 40, n.y - bob - nh + 2 + qb);
         }
       } });
     });
@@ -1344,14 +1347,14 @@
         if (m.dead) ctx.globalAlpha = Math.max(0, m.deadT / 0.6);
         if (m.hurtT > 0) ctx.translate((Math.random() - 0.5) * 8, 0);
         var bob = m.moving ? Math.abs(Math.sin(t * 8)) * 3 : Math.sin(t * 2 + m.x) * 2;
-        var im = img[m.spr], mw = im.width * m.scale, mh = im.height * m.scale;
-        ctx.drawImage(im, m.x - mw / 2, m.y - mh + 14 - bob, mw, mh);
+        var im = img[m.spr], mw = im.width * m.scale * CHAR_SCALE, mh = im.height * m.scale * CHAR_SCALE;
+        ctx.drawImage(im, m.x - mw / 2, m.y - mh + 14 * CHAR_SCALE - bob, mw, mh);
         ctx.restore();
         if (!m.dead && m.hp < m.maxHp) {
           ctx.fillStyle = 'rgba(0,0,0,0.55)';
-          ctx.fillRect(m.x - 30, m.y - 200 * m.scale, 60, 7);
+          ctx.fillRect(m.x - 24, m.y - 140 * m.scale, 48, 6);
           ctx.fillStyle = '#ef4444';
-          ctx.fillRect(m.x - 30, m.y - 200 * m.scale, 60 * Math.max(0, m.hp / m.maxHp), 7);
+          ctx.fillRect(m.x - 24, m.y - 140 * m.scale, 48 * Math.max(0, m.hp / m.maxHp), 6);
         }
       } });
     });
@@ -1361,14 +1364,14 @@
     // slash arc + projectiles + floaters (G4)
     if (slashT > 0) {
       ctx.save();
-      ctx.translate(player.x, player.y - 110);
+      ctx.translate(player.x, player.y - 72);
       ctx.scale(player.face, 1);
       ctx.strokeStyle = 'rgba(255,255,255,' + Math.max(0, slashT / 0.3).toFixed(2) + ')';
-      ctx.lineWidth = 9; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.arc(46, 0, 62, -1.1, 1.1); ctx.stroke();
+      ctx.lineWidth = 7; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(32, 0, 44, -1.1, 1.1); ctx.stroke();
       ctx.strokeStyle = 'rgba(253,224,71,0.7)';
-      ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.arc(46, 0, 62, -1.1, 1.1); ctx.stroke();
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(32, 0, 44, -1.1, 1.1); ctx.stroke();
       ctx.restore();
     }
     projectiles.forEach(function (p) {
