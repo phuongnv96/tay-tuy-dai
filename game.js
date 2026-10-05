@@ -13,6 +13,12 @@
   var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'do_nhi_wave', 'do_nhi_laugh',
                      'do_nhi_talk', 'su_phu', 'su_phu_talk',
                      'thiet_nguu', 'linh_nhi', 'thach_dau', 'ho_lao', 'ba_ba',
+                     'thiet_nguu_w1', 'thiet_nguu_w2', 'thiet_nguu_w3',
+                     'linh_nhi_w1', 'linh_nhi_w2', 'linh_nhi_w3',
+                     'thach_dau_w1', 'thach_dau_w2', 'thach_dau_w3',
+                     'ho_lao_w1', 'ho_lao_w2', 'ho_lao_w3',
+                     'ba_ba_w1', 'ba_ba_w2', 'ba_ba_w3',
+                     'do_nhi_idle', 'do_nhi_atk1', 'do_nhi_atk2', 'do_nhi_atk3',
                      'tile_cong_nui', 'tile_nha_tranh', 'tile_ban_da', 'tile_lu_nuoc', 'tile_hang_rao',
                      'tile_truc', 'tile_dun_cat', 'tile_tan_tich', 'tile_tung_tuyet',
                      'tile_am_tuyet', 'tile_tuyet_lien', 'tile_nui_lua', 'tile_dung_nham',
@@ -223,18 +229,23 @@
   var NPC_DEFS = {
     thiet_nguu: { id: 'thiet_nguu', name: 'Thiết Ngưu', spr: 'thiet_nguu', color: '#b45309',
       home: { x: 760, y: 1000 }, range: 130, questId: 'khoai',
+      walk: ['thiet_nguu_w1', 'thiet_nguu_w2', 'thiet_nguu_w3'],
       dlg: 'thiet_nguu_idle', thanks: 'thiet_nguu_thanks', idleDone: 'thiet_nguu_done' },
     linh_nhi: { id: 'linh_nhi', name: 'Linh Nhi', spr: 'linh_nhi', color: '#d63384',
       home: { x: 300, y: 700 }, range: 110, questId: 'sao_truc',
+      walk: ['linh_nhi_w1', 'linh_nhi_w2', 'linh_nhi_w3'],
       dlg: 'linh_nhi_idle', thanks: 'linh_nhi_thanks', idleDone: 'linh_nhi_done' },
     thach_dau: { id: 'thach_dau', name: 'Thạch Đầu', spr: 'thach_dau', color: '#6b7280',
       home: { x: 480, y: 720 }, range: 120, questId: 'cui',
+      walk: ['thach_dau_w1', 'thach_dau_w2', 'thach_dau_w3'],
       dlg: 'thach_dau_idle', thanks: 'thach_dau_thanks', idleDone: 'thach_dau_done' },
     ho_lao: { id: 'ho_lao', name: 'Hồ Lão', spr: 'ho_lao', color: '#92400e',
       home: { x: 960, y: 700 }, range: 100, questId: 'ho_tong',
+      walk: ['ho_lao_w1', 'ho_lao_w2', 'ho_lao_w3'],
       dlg: 'ho_lao_idle', thanks: 'ho_lao_thanks', idleDone: 'ho_lao_done' },
     ba_ba: { id: 'ba_ba', name: 'Tuyết Sơn Bà Bà', spr: 'ba_ba', color: '#64748b',
       home: { x: 960, y: 480 }, range: 80, questId: 'tuyet_lien',
+      walk: ['ba_ba_w1', 'ba_ba_w2', 'ba_ba_w3'],
       dlg: 'ba_ba_idle', thanks: 'ba_ba_thanks', idleDone: 'ba_ba_done' }
   };
   var NPCS = [];
@@ -314,7 +325,7 @@
   var MONSTERS = [];
   var projectiles = [];
   var floaters = [];
-  var slashT = 0, atkCd = 0, hurtFlash = 0;
+  var slashT = 0, atkCd = 0, hurtFlash = 0, atkAnimT = 0;
   var skillCd = [0, 0, 0];
 
   function addFloater(x, y, txt, color) {
@@ -366,7 +377,7 @@
   }
   function playerAttack() {
     if (atkCd > 0 || dialogueOpen || shopOpen || invOpen) return;
-    atkCd = 0.45; slashT = 0.18;
+    atkCd = 0.45; slashT = 0.18; atkAnimT = 0.38;
     sfxSwing();
     var dmg = WEAPONS[stats.weapon].dmg + Math.floor(Math.random() * 4);
     MONSTERS.forEach(function (m) {
@@ -490,7 +501,8 @@
       return { id: d.id, name: d.name, spr: d.spr, color: d.color,
                x: d.home.x, y: d.home.y, home: { x: d.home.x, y: d.home.y },
                range: d.range, wt: Math.random() * 2, tx: undefined, ty: undefined,
-               moving: false, questId: d.questId, dlg: d.dlg, thanks: d.thanks, idleDone: d.idleDone };
+               moving: false, face: 1, walk: d.walk,
+               questId: d.questId, dlg: d.dlg, thanks: d.thanks, idleDone: d.idleDone };
     });
     ITEMS = [];
     M.items.forEach(function (sp) { scatterItems(sp[0], sp[1], sp[2], sp[3], sp[4]); });
@@ -1048,12 +1060,13 @@
       } else {
         var sp = 55 * dt;
         n.moving = true;
+        if (dx < 0) n.face = -1; else if (dx > 0) n.face = 1;
         if (!collides(n.x + dx / d * sp, n.y, n)) n.x += dx / d * sp;
         if (!collides(n.x, n.y + dy / d * sp, n)) n.y += dy / d * sp;
       }
     });
     // combat update (G4)
-    atkCd -= dt; slashT -= dt; hurtFlash -= dt;
+    atkCd -= dt; slashT -= dt; hurtFlash -= dt; atkAnimT -= dt;
     for (var csi = 0; csi < 3; csi++) skillCd[csi] -= dt;
     stats.mp = Math.min(stats.maxMp, stats.mp + 6 * dt);
     MONSTERS.forEach(function (m) {
@@ -1285,11 +1298,15 @@
       var bob = player.moving ? Math.abs(Math.sin(t * 10)) * 4 : Math.sin(t * 2) * 2;
       var spr = 'do_nhi';
       if (emote) spr = emote.spr;
+      else if (atkAnimT > 0) {
+        spr = atkAnimT > 0.26 ? 'do_nhi_atk1' : atkAnimT > 0.12 ? 'do_nhi_atk2' : 'do_nhi_atk3';
+      }
       else if (dialogueOpen && dlgLines[lineIdx].who === 'player') spr = 'do_nhi_talk';
       else if (player.moving) {
         var frames = ['do_nhi_w1', 'do_nhi', 'do_nhi_w2', 'do_nhi'];
         spr = frames[Math.floor(t * 8) % 4];
       }
+      else spr = (Math.floor(t * 1.4) % 4 === 3) ? 'do_nhi_idle' : 'do_nhi';
       drawSprite(spr, player.x, player.y - bob, player.face < 0);
       ctx.fillStyle = '#e8f4ff'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('Nguyên', player.x, player.y - 228 - bob);
@@ -1300,8 +1317,14 @@
     });
     NPCS.forEach(function (n) {
       ents.push({ y: n.y, f: function () {
-        var bob = n.moving ? Math.abs(Math.sin(t * 8)) * 3 : Math.sin(t * 1.8 + n.x) * 2;
-        drawSprite(n.spr, n.x, n.y - bob, false);
+        var bob = n.moving ? 0 : Math.sin(t * 1.8 + n.x) * 2;
+        var wspr = n.spr;
+        if (n.moving && n.walk) {
+          var seq = [0, 1, 2, 1];
+          wspr = n.walk[seq[Math.floor(t * 7) % 4]];
+          bob = Math.abs(Math.sin(t * 7)) * 3;
+        }
+        drawSprite(wspr, n.x, n.y - bob, n.face < 0);
         ctx.fillStyle = n.color; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
         ctx.fillText(n.name, n.x, n.y - 218 - bob);
         if (isNight()) {
