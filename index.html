@@ -10,18 +10,18 @@
     background: #101820; color: #e8e8e8;
     font-family: "Segoe UI", system-ui, sans-serif;
     display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; padding: 18px;
+    min-height: 100vh; min-height: 100dvh; padding: 10px;
   }
-  h1 { font-size: 22px; letter-spacing: 6px; margin-bottom: 4px; color: #f5d67b; }
-  .sub { font-size: 13px; color: #8fa3b8; margin-bottom: 12px; }
-  #wrap { position: relative; width: min(98vw, calc((100vh - 250px) * 1.6)); width: min(98vw, calc((100dvh - 250px) * 1.6)); }
+  h1 { font-size: 22px; letter-spacing: 6px; margin-bottom: 2px; color: #f5d67b; }
+  .sub { font-size: 13px; color: #8fa3b8; margin-bottom: 8px; }
+  #wrap { position: relative; }
   #wrap:fullscreen { width: 100vw; height: 100vh; height: 100dvh; display: flex; align-items: center; justify-content: center; background: #0a0e14; }
   canvas {
-    display: block; width: 100%; height: auto; border-radius: 8px;
+    display: block; border-radius: 8px;
     box-shadow: 0 12px 48px rgba(0,0,0,.6);
     image-rendering: pixelated;
   }
-  #wrap:fullscreen canvas { width: min(100vw, calc(100vh * 1.6)); width: min(100vw, calc(100dvh * 1.6)); border-radius: 0; }
+  #wrap:fullscreen canvas { width: min(100vw, calc(100vh * 1.6)); width: min(100vw, calc(100dvh * 1.6)); height: auto; border-radius: 0; }
   #btn-fs {
     background: #2b3542; color: #f5d67b; border: 1px solid rgba(245,214,123,.5);
     cursor: pointer; font-size: 13px; padding: 8px 18px; border-radius: 6px; margin-left: 10px;
@@ -31,7 +31,6 @@
     body { padding: 8px; }
     h1 { font-size: 17px; letter-spacing: 3px; }
     .sub { font-size: 11px; margin-bottom: 8px; }
-    #wrap { width: min(100vw, calc((100vh - 200px) * 1.6)); width: min(100vw, calc((100dvh - 200px) * 1.6)); }
     .controls { font-size: 11px; }
   }
   #hint {
@@ -155,7 +154,7 @@
     font-size: 17px; font-weight: 700; touch-action: none;
   }
   #touch-btns button:active { background: rgba(150,112,47,.95); }
-  .controls { margin-top: 12px; font-size: 13px; color: #8fa3b8; }
+  .controls { margin-top: 8px; font-size: 13px; color: #8fa3b8; }
   .controls b { color: #f5d67b; }
 </style>
 </head>
@@ -225,7 +224,23 @@
     });
     document.addEventListener('fullscreenchange', function () {
       document.getElementById('btn-fs').textContent = document.fullscreenElement ? '⛶ Thoát toàn màn hình' : '⛶ Toàn màn hình';
+      fitCanvas();
     });
+    // Fit the 1280x800 game canvas to the largest size that fits the window
+    function fitCanvas() {
+      var canvas = document.getElementById('game');
+      if (document.fullscreenElement) { canvas.style.width = ''; canvas.style.height = ''; return; }
+      var h1 = document.querySelector('body > h1'), sub = document.querySelector('body > .sub'), ctl = document.querySelector('body > .controls');
+      var usedH = (h1 ? h1.offsetHeight : 0) + (sub ? sub.offsetHeight : 0) + (ctl ? ctl.offsetHeight : 0) + 44;
+      var availW = window.innerWidth - 20, availH = window.innerHeight - usedH;
+      var scale = Math.min(availW / 1280, availH / 800);
+      scale = Math.max(0.3, scale);
+      canvas.style.width = Math.floor(1280 * scale) + 'px';
+      canvas.style.height = Math.floor(800 * scale) + 'px';
+    }
+    window.addEventListener('resize', fitCanvas);
+    window.addEventListener('orientationchange', fitCanvas);
+    fitCanvas();
   </script>
 </body>
 </html>
