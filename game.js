@@ -23,7 +23,14 @@
                      'tile_cong_nui', 'tile_nha_tranh', 'tile_ban_da', 'tile_lu_nuoc', 'tile_hang_rao',
                      'tile_truc', 'tile_dun_cat', 'tile_tan_tich', 'tile_tung_tuyet',
                      'tile_am_tuyet', 'tile_tuyet_lien', 'tile_nui_lua', 'tile_dung_nham',
-                     'cay_phong', 'cau_da', 'den_da', 'anh_dao'];
+                     'cay_phong', 'cau_da', 'den_da', 'anh_dao',
+                     't3d_cay_tron', 't3d_thong', 't3d_bach_duong', 't3d_thong_con', 't3d_la_vang', 't3d_lieu',
+                     't3d_da_tang', 't3d_da_reu', 't3d_phien_da', 't3d_soi', 't3d_da_dung', 't3d_da_nut',
+                     't3d_bui_tron', 't3d_bui_qua', 't3d_bui_hoa_hong', 't3d_co', 't3d_duong_xi', 't3d_bui_hoa_xanh',
+                     't3d_hoa_vang', 't3d_hoa_trang', 't3d_hoa_xanh', 't3d_hoa_hong',
+                     't3d_hoa_lam', 't3d_hoa_cam', 't3d_hoa_tim', 't3d_hoa_do',
+                     't3d_goc_cay', 't3d_thung_rong', 't3d_dong_go', 't3d_canh_cay',
+                     't3d_nam_do', 't3d_nam_tim', 't3d_thung_go', 't3d_hang_rao', 't3d_thung_phuy', 't3d_den_long'];
   var img = {}, loaded = 0;
   spriteNames.forEach(function (n) {
     var im = new Image();
@@ -53,7 +60,10 @@
         { x: 1500, y: 540, s: 'cay_phong' },
         { x: 620, y: 940, s: 'anh_dao' },
         { x: 1320, y: 1000, s: 'anh_dao' },
-        { x: 1620, y: 300, s: 'anh_dao' }
+        { x: 1620, y: 300, s: 'anh_dao' },
+        { x: 250, y: 800, s: 't3d_lieu' },
+        { x: 1700, y: 800, s: 't3d_cay_tron' },
+        { x: 960, y: 180, s: 't3d_cay_tron' },
       ],
       lanterns: [
         { x: 872, y: 640 }, { x: 1048, y: 640 },
@@ -71,7 +81,17 @@
         { s: 'tile_hang_rao', x: 350, y: 1160, w: 520,
           blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] },
         { s: 'tile_hang_rao', x: 1570, y: 1160, w: 520,
-          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] }
+          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] },
+        { s: 't3d_den_long', x: 700, y: 620, w: 90, blocks: [{ dx: 0, r: 20 }] },
+        { s: 't3d_den_long', x: 1220, y: 620, w: 90, blocks: [{ dx: 0, r: 20 }] },
+        { s: 't3d_hoa_vang', x: 500, y: 600, w: 60, blocks: [] },
+        { s: 't3d_hoa_hong', x: 560, y: 650, w: 60, blocks: [] },
+        { s: 't3d_hoa_trang', x: 1400, y: 620, w: 60, blocks: [] },
+        { s: 't3d_bui_tron', x: 300, y: 1000, w: 90, blocks: [{ dx: 0, r: 25 }] },
+        { s: 't3d_nam_do', x: 700, y: 1050, w: 70, blocks: [] },
+        { s: 't3d_thung_go', x: 560, y: 1180, w: 90, blocks: [{ dx: 0, r: 30 }] },
+        { s: 't3d_thung_phuy', x: 1360, y: 1150, w: 80, blocks: [{ dx: 0, r: 28 }] },
+        { s: 't3d_hang_rao', x: 1050, y: 1180, w: 200, blocks: [{ dx: -60, r: 25 }, { dx: 60, r: 25 }] },
       ],
       npcs: ['thiet_nguu', 'thach_dau'],
       items: [['khoai', 5, 1500, 700, 260], ['cui', 8, 480, 720, 280]],
@@ -95,7 +115,10 @@
         { x: 1700, y: 860, s: 'cay_phong' }, { x: 1450, y: 1080, s: 'cay_phong' },
         { x: 1150, y: 1120, s: 'cay_phong' }, { x: 850, y: 1060, s: 'cay_phong' },
         { x: 600, y: 1150, s: 'cay_phong' }, { x: 300, y: 1050, s: 'cay_phong' },
-        { x: 160, y: 800, s: 'cay_phong' }
+        { x: 160, y: 800, s: 'cay_phong' },
+        { x: 960, y: 900, s: 't3d_la_vang' },
+        { x: 500, y: 700, s: 't3d_la_vang' },
+        { x: 1500, y: 500, s: 't3d_cay_tron' },
       ],
       lanterns: [
         { x: 860, y: 560 }, { x: 1060, y: 560 },
@@ -105,7 +128,14 @@
         { s: 'tile_ban_da', x: 960, y: 640, w: 170,
           blocks: [{ dx: 0, r: 46 }] },
         { s: 'tile_hang_rao', x: 960, y: 300, w: 520,
-          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] }
+          blocks: [{ dx: -170, r: 30 }, { dx: 0, r: 30 }, { dx: 170, r: 30 }] },
+        { s: 't3d_goc_cay', x: 800, y: 800, w: 110, blocks: [{ dx: 0, r: 30 }] },
+        { s: 't3d_dong_go', x: 1300, y: 750, w: 110, blocks: [{ dx: 0, r: 30 }] },
+        { s: 't3d_nam_do', x: 400, y: 900, w: 70, blocks: [] },
+        { s: 't3d_nam_tim', x: 455, y: 935, w: 60, blocks: [] },
+        { s: 't3d_bui_qua', x: 1100, y: 400, w: 90, blocks: [{ dx: 0, r: 25 }] },
+        { s: 't3d_hoa_do', x: 1000, y: 1000, w: 60, blocks: [] },
+        { s: 't3d_hoa_vang', x: 1055, y: 1030, w: 60, blocks: [] },
       ],
       npcs: ['thach_dau'],
       items: [['khoai', 4, 960, 640, 420], ['cui', 4, 960, 640, 420]],
@@ -120,7 +150,10 @@
     rungtruc: {
       label: 'Rừng Trúc', W: 1920, H: 1280, ground: '#4f9e58', weather: null,
       pond: null, stream: null, dais: null, bridgeX0: 0, bridgeX1: 0, master: null,
-      trees: [],
+      trees: [
+        { x: 850, y: 200, s: 't3d_bach_duong' },
+        { x: 1750, y: 1050, s: 't3d_thong_con' },
+      ],
       lanterns: [{ x: 200, y: 580 }, { x: 420, y: 580 }],
       tiles: [
         { s: 'tile_truc', x: 600, y: 100, w: 130, blocks: [{ dx: 0, r: 42 }] },
@@ -139,7 +172,13 @@
         { s: 'tile_truc', x: 1600, y: 700, w: 130, blocks: [{ dx: 0, r: 42 }] },
         { s: 'tile_truc', x: 1600, y: 900, w: 130, blocks: [{ dx: 0, r: 42 }] },
         { s: 'tile_truc', x: 1600, y: 1100, w: 130, blocks: [{ dx: 0, r: 42 }] },
-        { s: 'tile_ban_da', x: 420, y: 780, w: 150, blocks: [{ dx: 0, r: 42 }] }
+        { s: 'tile_ban_da', x: 420, y: 780, w: 150, blocks: [{ dx: 0, r: 42 }] },
+        { s: 't3d_duong_xi', x: 300, y: 900, w: 90, blocks: [] },
+        { s: 't3d_co', x: 750, y: 1000, w: 80, blocks: [] },
+        { s: 't3d_co', x: 1400, y: 200, w: 80, blocks: [] },
+        { s: 't3d_bui_hoa_xanh', x: 1750, y: 800, w: 90, blocks: [{ dx: 0, r: 25 }] },
+        { s: 't3d_da_reu', x: 950, y: 1150, w: 110, blocks: [{ dx: 0, r: 30 }] },
+        { s: 't3d_nam_tim', x: 1350, y: 600, w: 60, blocks: [] },
       ],
       npcs: ['linh_nhi'],
       items: [['cui', 3, 1750, 640, 180]],
@@ -163,7 +202,12 @@
         { s: 'tile_dun_cat', x: 1150, y: 550, w: 260, blocks: [] },
         { s: 'tile_dun_cat', x: 1650, y: 1050, w: 260, blocks: [] },
         { s: 'tile_dun_cat', x: 450, y: 1150, w: 260, blocks: [] },
-        { s: 'tile_tan_tich', x: 300, y: 900, w: 300, blocks: [{ dx: 0, r: 90 }] }
+        { s: 'tile_tan_tich', x: 300, y: 900, w: 300, blocks: [{ dx: 0, r: 90 }] },
+        { s: 't3d_da_tang', x: 800, y: 400, w: 110, blocks: [{ dx: 0, r: 35 }] },
+        { s: 't3d_da_dung', x: 1500, y: 800, w: 70, blocks: [{ dx: 0, r: 25 }] },
+        { s: 't3d_canh_cay', x: 200, y: 600, w: 120, blocks: [] },
+        { s: 't3d_soi', x: 1100, y: 1150, w: 120, blocks: [] },
+        { s: 't3d_phien_da', x: 600, y: 200, w: 140, blocks: [] },
       ],
       npcs: ['ho_lao'],
       items: [],
@@ -186,11 +230,17 @@
         { x: 900, y: 250, s: 'tile_tung_tuyet' }, { x: 1300, y: 200, s: 'tile_tung_tuyet' },
         { x: 1650, y: 300, s: 'tile_tung_tuyet' }, { x: 1750, y: 700, s: 'tile_tung_tuyet' },
         { x: 1400, y: 1000, s: 'tile_tung_tuyet' }, { x: 900, y: 1100, s: 'tile_tung_tuyet' },
-        { x: 500, y: 1050, s: 'tile_tung_tuyet' }, { x: 200, y: 800, s: 'tile_tung_tuyet' }
+        { x: 500, y: 1050, s: 'tile_tung_tuyet' }, { x: 200, y: 800, s: 'tile_tung_tuyet' },
+        { x: 700, y: 500, s: 't3d_thong' },
+        { x: 1200, y: 500, s: 't3d_thong' },
+        { x: 1600, y: 900, s: 't3d_thong_con' },
+        { x: 350, y: 500, s: 't3d_thong_con' },
       ],
       lanterns: [{ x: 860, y: 420 }, { x: 1060, y: 420 }],
       tiles: [
-        { s: 'tile_am_tuyet', x: 960, y: 350, w: 280, blocks: [{ dx: 0, r: 80 }] }
+        { s: 'tile_am_tuyet', x: 960, y: 350, w: 280, blocks: [{ dx: 0, r: 80 }] },
+        { s: 't3d_da_tang', x: 1150, y: 300, w: 110, blocks: [{ dx: 0, r: 35 }] },
+        { s: 't3d_soi', x: 700, y: 900, w: 120, blocks: [] },
       ],
       npcs: ['ba_ba'],
       items: [['tuyet_lien', 1, 960, 120, 10]],
@@ -211,7 +261,11 @@
         { s: 'tile_nui_lua', x: 1500, y: 400, w: 420, blocks: [{ dx: 0, r: 140 }] },
         { s: 'tile_dung_nham', x: 900, y: 800, w: 300, blocks: [{ dx: 0, r: 80 }] },
         { s: 'tile_dung_nham', x: 1300, y: 1050, w: 240, blocks: [{ dx: 0, r: 60 }] },
-        { s: 'tile_dung_nham', x: 500, y: 900, w: 200, blocks: [{ dx: 0, r: 50 }] }
+        { s: 'tile_dung_nham', x: 500, y: 900, w: 200, blocks: [{ dx: 0, r: 50 }] },
+        { s: 't3d_da_nut', x: 700, y: 1100, w: 110, blocks: [{ dx: 0, r: 35 }] },
+        { s: 't3d_da_nut', x: 1100, y: 400, w: 110, blocks: [{ dx: 0, r: 35 }] },
+        { s: 't3d_da_dung', x: 300, y: 400, w: 70, blocks: [{ dx: 0, r: 25 }] },
+        { s: 't3d_phien_da', x: 1600, y: 1100, w: 140, blocks: [] },
       ],
       npcs: [],
       items: [],
