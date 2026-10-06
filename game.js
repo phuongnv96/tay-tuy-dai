@@ -43,7 +43,7 @@
         { x: 1320, y: 1000, s: 'anh_dao' },
         { x: 1620, y: 300, s: 'anh_dao' },
         { x: 250, y: 800, s: 't3d_lieu' },
-        { x: 1700, y: 800, s: 't3d_cay_tron' },
+        { x: 1760, y: 670, s: 't3d_cay_tron' },
         { x: 960, y: 180, s: 't3d_cay_tron' },
         { x: 1300, y: 950, s: 't3d_bach_duong' },
       ],
@@ -597,6 +597,7 @@
     });
     buildPads();
     player.x = sx; player.y = sy;
+    resolveStuck();
     if (typeof cam !== 'undefined') {
       cam.x = Math.max(0, Math.min(WORLD_W - W, player.x - W / 2));
       cam.y = Math.max(0, Math.min(WORLD_H - H, player.y - H / 2));
@@ -653,6 +654,18 @@
       if (dx * dx + dy * dy < b.r * b.r) return true;
     }
     return npcBlocked(x, y, self);
+  }
+
+  // if the player loads inside a blocker (e.g. new decor placed over an old save spot), nudge out
+  function resolveStuck() {
+    if (!collides(player.x, player.y, player)) return;
+    for (var r = 12; r < 420; r += 12) {
+      for (var a = 0; a < 6.283; a += 0.45) {
+        var nx = player.x + Math.cos(a) * r, ny = player.y + Math.sin(a) * r * 0.7;
+        if (!collides(nx, ny, player)) { player.x = nx; player.y = ny; return; }
+      }
+    }
+    player.x = MAPS[curMap].spawn.x; player.y = MAPS[curMap].spawn.y;
   }
 
   // ---------- input ----------
