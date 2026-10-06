@@ -11,26 +11,7 @@
   var CHAR_SCALE = 0.62, TREE_SCALE = 0.75, TILE_SCALE = 0.75; // smaller sprites, bigger map feel
 
   // ---------- sprites ----------
-  var spriteNames = ['do_nhi', 'do_nhi_w1', 'do_nhi_w2', 'do_nhi_wave', 'do_nhi_laugh',
-                     'do_nhi_talk', 'su_phu', 'su_phu_talk',
-                     'thiet_nguu', 'linh_nhi', 'thach_dau', 'ho_lao', 'ba_ba',
-                     'thiet_nguu_w1', 'thiet_nguu_w2', 'thiet_nguu_w3',
-                     'linh_nhi_w1', 'linh_nhi_w2', 'linh_nhi_w3',
-                     'thach_dau_w1', 'thach_dau_w2', 'thach_dau_w3',
-                     'ho_lao_w1', 'ho_lao_w2', 'ho_lao_w3',
-                     'ba_ba_w1', 'ba_ba_w2', 'ba_ba_w3',
-                     'do_nhi_idle', 'do_nhi_atk1', 'do_nhi_atk2', 'do_nhi_atk3',
-                     'tile_cong_nui', 'tile_nha_tranh', 'tile_ban_da', 'tile_lu_nuoc', 'tile_hang_rao',
-                     'tile_truc', 'tile_dun_cat', 'tile_tan_tich', 'tile_tung_tuyet',
-                     'tile_am_tuyet', 'tile_tuyet_lien', 'tile_nui_lua', 'tile_dung_nham',
-                     'cay_phong', 'cau_da', 'den_da', 'anh_dao',
-                     't3d_cay_tron', 't3d_thong', 't3d_bach_duong', 't3d_thong_con', 't3d_la_vang', 't3d_lieu',
-                     't3d_da_tang', 't3d_da_reu', 't3d_phien_da', 't3d_soi', 't3d_da_dung', 't3d_da_nut',
-                     't3d_bui_tron', 't3d_bui_qua', 't3d_bui_hoa_hong', 't3d_co', 't3d_duong_xi', 't3d_bui_hoa_xanh',
-                     't3d_hoa_vang', 't3d_hoa_trang', 't3d_hoa_xanh', 't3d_hoa_hong',
-                     't3d_hoa_lam', 't3d_hoa_cam', 't3d_hoa_tim', 't3d_hoa_do',
-                     't3d_goc_cay', 't3d_thung_rong', 't3d_dong_go', 't3d_canh_cay',
-                     't3d_nam_do', 't3d_nam_tim', 't3d_thung_go', 't3d_hang_rao', 't3d_thung_phuy', 't3d_den_long'];
+  var spriteNames = Object.keys(ASSETS); // every sprite: chars, env, monsters, decor
   var img = {}, loaded = 0;
   spriteNames.forEach(function (n) {
     var im = new Image();
