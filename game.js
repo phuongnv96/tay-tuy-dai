@@ -135,7 +135,7 @@
         { spr: 'khi_da', x: 1200, y: 900, hp: 35, dmg: 7, speed: 75, xp: 18, coins: 6 },
         { spr: 'khi_da', x: 1600, y: 400, hp: 35, dmg: 7, speed: 75, xp: 18, coins: 6 }
       ],
-      portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 1800, sy: 800, label: 'Tây Tùy Đài' }],
+      portals: [{ x: 50, y: 640, r: 70, to: 'taytuydai', sx: 1800, sy: 880, label: 'Tây Tùy Đài' }],
       spawn: { x: 140, y: 640 }
     },
     rungtruc: {
@@ -1015,7 +1015,7 @@
     ctx.restore();
   }
 
-  var fadeA = 0, fadeDir = 0, pendingPortal = null;
+  var fadeA = 0, fadeDir = 0, pendingPortal = null, portalSuppress = null;
   function drawPortal(p) {
     var pulse = 1 + Math.sin(t * 3) * 0.1;
     ctx.save();
@@ -1261,6 +1261,13 @@
         fadeA = 1;
         var pp = pendingPortal;
         loadMap(pp.to, pp.sx, pp.sy);
+        // don't re-trigger a portal we're standing inside: re-arm only after stepping out
+        portalSuppress = null;
+        var _bpl = MAPS[curMap].portals;
+        for (var _bi = 0; _bi < _bpl.length; _bi++) {
+          var _bp = _bpl[_bi], _bdx = player.x - _bp.x, _bdy = player.y - _bp.y;
+          if (_bdx * _bdx + _bdy * _bdy < _bp.r * _bp.r) { portalSuppress = _bp; break; }
+        }
         saveGame();
         fadeDir = -1;
       }
@@ -1271,7 +1278,9 @@
       var portals = MAPS[curMap].portals;
       for (var pi = 0; pi < portals.length; pi++) {
         var p = portals[pi], pdx = player.x - p.x, pdy = player.y - p.y;
-        if (pdx * pdx + pdy * pdy < p.r * p.r) { pendingPortal = p; fadeDir = 1; break; }
+        var pin = pdx * pdx + pdy * pdy < p.r * p.r;
+        if (p === portalSuppress) { if (!pin) portalSuppress = null; continue; }
+        if (pin) { pendingPortal = p; fadeDir = 1; break; }
       }
     }
 
